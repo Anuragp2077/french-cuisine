@@ -1,0 +1,428 @@
+.regions-page {
+  min-height: 100vh;
+  background: #17120f;
+  color: #f4ead9;
+  padding-bottom: 100px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.regions-hero {
+  min-height: 72vh;
+  padding: 150px 8vw 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.regions-eyebrow {
+  color: #d9a441;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.regions-hero h1 {
+  max-width: 900px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.5rem, 8vw, 7.5rem);
+  line-height: 0.95;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: -0.05em;
+}
+
+.regions-hero p {
+  max-width: 650px;
+  margin-top: 35px;
+  color: #b9aa98;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+/* =========================
+   MAP SECTION
+========================= */
+
+.regions-map-section {
+  padding: 80px 7vw 120px;
+  scroll-margin-top: 90px;
+}
+
+.regions-section-heading {
+  max-width: 1200px;
+  margin: 0 auto 45px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.regions-section-heading span,
+.selected-region-header > span {
+  color: #d9a441;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+}
+
+.regions-section-heading h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.3rem, 4vw, 4rem);
+  font-weight: 400;
+  margin: 12px 0 0;
+}
+
+.regions-section-heading p {
+  max-width: 420px;
+  color: #a99b8b;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* =========================
+   FRANCE MAP
+========================= */
+
+.france-map-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 650px;
+
+  border: 1px solid rgba(244, 234, 217, 0.1);
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(217, 164, 65, 0.08),
+      transparent 55%
+    ),
+    #201814;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.france-map {
+  width: min(80%, 850px);
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.region-path {
+  fill: #72503e;
+  stroke: #17120f;
+  stroke-width: 1.8;
+  cursor: pointer;
+
+  transition:
+    fill 0.2s ease,
+    stroke 0.2s ease,
+    transform 0.2s ease;
+}
+
+.region-path:hover,
+.region-path.active {
+  fill: #d9a441;
+  stroke: #f5d58b;
+  stroke-width: 2.2;
+}
+
+.region-path:focus {
+  outline: none;
+  fill: #d9a441;
+  stroke: #f5d58b;
+  stroke-width: 2.5;
+}
+
+.map-hint {
+  position: absolute;
+  left: 28px;
+  bottom: 25px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 15px;
+
+  background: rgba(23, 18, 15, 0.9);
+  border: 1px solid rgba(244, 234, 217, 0.12);
+
+  color: #d7cbbb;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.map-hint-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d9a441;
+  display: block;
+}
+
+/* =========================
+   DETAILS
+========================= */
+
+.region-details {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 7vw 0;
+  scroll-margin-top: 80px;
+}
+
+.region-empty {
+  min-height: 400px;
+  border-top: 1px solid rgba(244, 234, 217, 0.1);
+  padding-top: 70px;
+}
+
+.region-empty-number {
+  color: #6f5a49;
+  font-family: Georgia, serif;
+  font-size: 5rem;
+}
+
+.region-empty h2 {
+  max-width: 700px;
+  margin: 10px 0 20px;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  line-height: 1;
+}
+
+.region-empty p {
+  color: #9f9182;
+  max-width: 600px;
+  line-height: 1.8;
+}
+
+.selected-region-header {
+  border-top: 1px solid rgba(244, 234, 217, 0.12);
+  padding-top: 65px;
+  margin-bottom: 50px;
+}
+
+.selected-region-header h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: 0.95;
+  margin: 15px 0 25px;
+  letter-spacing: -0.04em;
+}
+
+.selected-region-header p {
+  max-width: 700px;
+  color: #afa193;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+/* =========================
+   DISH CARDS
+========================= */
+
+.region-dishes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.region-dish-card {
+  height: 420px;
+  position: relative;
+  overflow: hidden;
+  background: #2a211c;
+}
+
+.region-dish-card img {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  transition: transform 0.6s ease;
+}
+
+.region-dish-card:hover img {
+  transform: scale(1.05);
+}
+
+.dish-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(20, 14, 11, 0.05) 0%,
+      rgba(20, 14, 11, 0.25) 35%,
+      rgba(20, 14, 11, 0.92) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(20, 14, 11, 0.85) 0%,
+      transparent 55%
+    );
+}
+
+.dish-content {
+  position: absolute;
+  right: 40px;
+  bottom: 35px;
+
+  width: 58%;
+  text-align: right;
+}
+
+.dish-content span {
+  color: #e2bc6d;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.dish-content h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+  line-height: 1;
+  font-weight: 400;
+  margin: 10px 0 0;
+}
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+.back-to-map-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0 20px;
+}
+
+.back-to-map {
+  border: 1px solid rgba(217, 164, 65, 0.55);
+  background: transparent;
+  color: #e4c98e;
+
+  padding: 15px 25px;
+
+  font-family: inherit;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.back-to-map:hover {
+  background: #d9a441;
+  color: #17120f;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+  .regions-hero {
+    min-height: 65vh;
+    padding: 130px 7vw 80px;
+  }
+
+  .regions-section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .france-map-wrapper {
+    min-height: 480px;
+  }
+
+  .france-map {
+    width: 90%;
+  }
+
+  .region-dishes {
+    grid-template-columns: 1fr;
+  }
+
+  .region-dish-card {
+    height: 380px;
+  }
+
+  .dish-content {
+    right: 25px;
+    bottom: 25px;
+    width: 65%;
+  }
+}
+
+@media (max-width: 500px) {
+  .regions-hero h1 {
+    font-size: 3.3rem;
+  }
+
+  .regions-map-section {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .france-map-wrapper {
+    min-height: 380px;
+  }
+
+  .map-hint {
+    left: 15px;
+    bottom: 15px;
+    font-size: 0.68rem;
+  }
+
+  .region-details {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .selected-region-header h2 {
+    font-size: 3rem;
+  }
+
+  .region-dish-card {
+    height: 330px;
+  }
+
+  .dish-content {
+    right: 20px;
+    width: 58%;
+  }
+  .dish-content p {
+  color: #d6c9b8;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  margin: 12px 0 0;
+  opacity: 0.9;
+}
+}
