@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Globe, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
-import "./Navbar.css";
+import "./navbar.css";
 
 const navItems = [
   {
