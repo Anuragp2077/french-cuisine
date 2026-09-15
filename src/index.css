@@ -1487,4 +1487,25 @@ img {
   .home-final p {
     font-size: 8px;
   }
+/* =========================================================
+   GLOBAL MOBILE SAFETY
+   ========================================================= */
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Make images responsive everywhere */
+img {
+  max-width: 100%;
+}
 }
