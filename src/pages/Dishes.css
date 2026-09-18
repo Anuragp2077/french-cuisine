@@ -1,0 +1,1574 @@
+/* =========================================================
+   DISHES PAGE
+========================================================= */
+
+.dishes-page {
+  min-height: 100vh;
+
+  background: #17120f;
+  color: #f4ead9;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.dishes-hero {
+  position: relative;
+
+  min-height: 510px;
+
+  display: flex;
+  align-items: flex-end;
+
+  padding: 150px 7vw 75px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 78% 35%,
+      rgba(217, 164, 65, 0.09),
+      transparent 34%
+    ),
+    #17120f;
+}
+
+.dishes-hero::after {
+  content: "";
+
+  position: absolute;
+
+  left: 7vw;
+  right: 7vw;
+  bottom: 0;
+
+  height: 1px;
+
+  background:
+    rgba(244, 234, 217, 0.12);
+}
+
+.dishes-hero__inner {
+  position: relative;
+  z-index: 2;
+
+  max-width: 920px;
+}
+
+.dishes-hero__eyebrow {
+  margin: 0;
+
+  color: #d9a441;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.2em;
+
+  text-transform: uppercase;
+}
+
+.dishes-hero h1 {
+  margin: 25px 0 30px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(64px, 8vw, 126px);
+
+  font-weight: 400;
+
+  line-height: 0.86;
+
+  letter-spacing: -0.055em;
+}
+
+.dishes-hero h1 span {
+  color: #d9a441;
+
+  font-style: italic;
+}
+
+.dishes-hero__description {
+  max-width: 570px;
+
+  margin: 0;
+
+  color:
+    rgba(244, 234, 217, 0.56);
+
+  font-size: 14px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   STAMP
+========================================================= */
+
+.dishes-hero__stamp {
+  position: absolute;
+
+  right: 7vw;
+  bottom: 70px;
+
+  width: 145px;
+  height: 145px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    rgba(217, 164, 65, 0.3);
+
+  border-radius: 50%;
+
+  color:
+    rgba(244, 234, 217, 0.6);
+
+  transform: rotate(-8deg);
+}
+
+.dishes-hero__stamp span {
+  font-size: 8px;
+
+  letter-spacing: 0.2em;
+}
+
+.dishes-hero__stamp strong {
+  margin: 5px 0;
+
+  color: #d9a441;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 25px;
+  font-weight: 400;
+}
+
+
+/* =========================================================
+   CATALOGUE
+========================================================= */
+
+.dishes-catalogue {
+  padding: 65px 7vw 0;
+}
+
+.dishes-filter-head {
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 35px;
+}
+
+.dishes-section-label {
+  margin: 0;
+
+  color: #d9a441;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.2em;
+
+  text-transform: uppercase;
+}
+
+.dishes-filter-head h2 {
+  margin: 12px 0 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 48px;
+
+  font-weight: 400;
+
+  line-height: 0.95;
+
+  letter-spacing: -0.04em;
+}
+
+.dishes-count {
+  color:
+    rgba(244, 234, 217, 0.38);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.dishes-toolbar {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 35px;
+
+  padding-bottom: 25px;
+
+  border-bottom:
+    1px solid
+    rgba(244, 234, 217, 0.12);
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.dishes-filters {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+}
+
+.dishes-filter {
+  position: relative;
+
+  min-height: 42px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 17px;
+
+  border:
+    1px solid
+    transparent;
+
+  background: transparent;
+
+  color:
+    rgba(244, 234, 217, 0.45);
+
+  font-family: Arial, sans-serif;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.13em;
+
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+.dishes-filter:hover {
+  color: #f4ead9;
+
+  border-color:
+    rgba(244, 234, 217, 0.16);
+}
+
+.dishes-filter--active {
+  color: #17120f;
+
+  background: #d9a441;
+
+  border-color: #d9a441;
+}
+
+.dishes-filter__dot {
+  width: 4px;
+  height: 4px;
+
+  margin-left: 9px;
+
+  border-radius: 50%;
+
+  background: currentColor;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.dishes-search {
+  width: min(300px, 100%);
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color:
+    rgba(244, 234, 217, 0.42);
+}
+
+.dishes-search input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  padding: 12px 0;
+
+  background: transparent;
+
+  color: #f4ead9;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 12px;
+}
+
+.dishes-search input::placeholder {
+  color:
+    rgba(244, 234, 217, 0.32);
+}
+
+.dishes-search__clear {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    rgba(244, 234, 217, 0.5);
+
+  cursor: pointer;
+}
+
+.dishes-search__clear:hover {
+  color: #d9a441;
+}
+
+
+/* =========================================================
+   GRID HEADER
+========================================================= */
+
+.dishes-grid-header {
+  margin:
+    30px 7vw 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 12px;
+
+  border-bottom:
+    1px solid
+    rgba(244, 234, 217, 0.12);
+}
+
+.dishes-grid-header__left {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 13px;
+}
+
+.dishes-grid-header__count {
+  color: #d9a441;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 22px;
+}
+
+.dishes-grid-header__label,
+.dishes-grid-header__result {
+  color:
+    rgba(244, 234, 217, 0.38);
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+}
+
+.dishes-grid-header__result {
+  color: #c9858e;
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.dishes-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 70px 38px;
+
+  padding:
+    28px 7vw 110px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.dish-card {
+  min-width: 0;
+
+  cursor: pointer;
+
+  outline: none;
+}
+
+.dish-card:focus-visible {
+  outline:
+    1px solid
+    #d9a441;
+
+  outline-offset: 8px;
+}
+
+.dish-card__image-wrap {
+  position: relative;
+
+  width: 100%;
+
+  height:
+    clamp(260px, 29vw, 470px);
+
+  overflow: hidden;
+
+  background: #211914;
+}
+
+.dish-card__image {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transform: scale(1);
+
+  transition:
+    transform 0.8s
+      cubic-bezier(0.2, 0.65, 0.2, 1),
+    filter 0.5s ease;
+}
+
+.dish-card__overlay {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(15, 11, 9, 0.08),
+      rgba(15, 11, 9, 0.62)
+    );
+
+  pointer-events: none;
+}
+
+.dish-card__number {
+  position: absolute;
+
+  top: 18px;
+  left: 20px;
+
+  color:
+    rgba(244, 234, 217, 0.75);
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+}
+
+.dish-card__open {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+
+  place-items: center;
+
+  border:
+    1px solid
+    rgba(244, 234, 217, 0.3);
+
+  color: #f4ead9;
+
+  opacity: 0;
+
+  transform: translateY(8px);
+
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    background 0.25s ease;
+}
+
+.dish-card__discover {
+  position: absolute;
+
+  left: 22px;
+  bottom: 20px;
+
+  color: #d9a441;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+
+  opacity: 0;
+
+  transform: translateY(10px);
+
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.dish-card:hover .dish-card__image,
+.dish-card:focus-visible .dish-card__image {
+  transform: scale(1.045);
+
+  filter: saturate(1.05);
+}
+
+.dish-card:hover .dish-card__open,
+.dish-card:focus-visible .dish-card__open,
+.dish-card:hover .dish-card__discover,
+.dish-card:focus-visible .dish-card__discover {
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+.dish-card__open:hover {
+  background: #d9a441;
+
+  color: #17120f;
+}
+
+
+/* =========================================================
+   CARD INFO
+========================================================= */
+
+.dish-card__info {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  padding: 18px 2px 0;
+}
+
+.dish-card__region {
+  margin: 0 0 8px;
+
+  color: #c9858e;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+}
+
+.dish-card__name {
+  margin: 0;
+
+  color: #f4ead9;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(27px, 3vw, 45px);
+
+  font-weight: 400;
+
+  line-height: 0.95;
+
+  letter-spacing: -0.035em;
+}
+
+.dish-card__type {
+  flex-shrink: 0;
+
+  padding-top: 6px;
+
+  color:
+    rgba(244, 234, 217, 0.36);
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.dishes-empty {
+  grid-column: 1 / -1;
+
+  padding: 110px 20px;
+
+  text-align: center;
+}
+
+.dishes-empty h3 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 42px;
+
+  font-weight: 400;
+}
+
+.dishes-empty p {
+  margin: 15px 0 0;
+
+  color:
+    rgba(244, 234, 217, 0.45);
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   CULTURAL SECTION
+========================================================= */
+
+.dishes-culture {
+  min-height: 530px;
+
+  display: grid;
+
+  grid-template-columns:
+    0.2fr 1fr 0.45fr;
+
+  gap: 50px;
+
+  padding: 100px 7vw;
+
+  border-top:
+    1px solid
+    rgba(244, 234, 217, 0.12);
+}
+
+.dishes-culture__number {
+  color: #d9a441;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 22px;
+}
+
+.dishes-culture__content h2 {
+  margin: 18px 0 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(54px, 6vw, 88px);
+
+  font-weight: 400;
+
+  line-height: 0.9;
+
+  letter-spacing: -0.05em;
+}
+
+.dishes-culture__content h2 span {
+  color: #c9858e;
+
+  font-style: italic;
+}
+
+.dishes-culture__content > p:last-child {
+  max-width: 500px;
+
+  margin-top: 40px;
+
+  color: #b9aa99;
+
+  font-size: 13px;
+
+  line-height: 1.8;
+}
+
+.dishes-culture__hours {
+  align-self: end;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 28px;
+
+  border-left:
+    1px solid
+    rgba(244, 234, 217, 0.16);
+
+  padding-left: 35px;
+}
+
+.dishes-culture__hours div {
+  display: grid;
+
+  gap: 4px;
+}
+
+.dishes-culture__hours span {
+  color: #d9a441;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 1.5rem;
+}
+
+.dishes-culture__hours strong {
+  color: #b9aa99;
+
+  font-size: 0.62rem;
+
+  letter-spacing: 0.14em;
+}
+
+
+/* =========================================================
+   RECIPE MODAL
+========================================================= */
+
+.dish-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 99999;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 28px;
+
+  background:
+    rgba(8, 6, 5, 0.91);
+
+  backdrop-filter: blur(12px);
+
+  overflow: hidden;
+
+  animation:
+    dishModalFade 0.25s ease;
+}
+
+@keyframes dishModalFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* =========================================================
+   MODAL PANEL
+========================================================= */
+
+.dish-modal__inner {
+  position: relative;
+
+  width: min(1180px, 100%);
+
+  height:
+    min(88vh, 850px);
+
+  display: grid;
+
+  grid-template-columns:
+    44% minmax(0, 56%);
+
+  background: #211914;
+
+  border:
+    1px solid
+    rgba(244, 234, 217, 0.14);
+
+  overflow: hidden;
+
+  box-shadow:
+    0 35px 100px
+    rgba(0, 0, 0, 0.65);
+
+  animation:
+    dishModalUp 0.35s
+    cubic-bezier(0.2, 0.65, 0.2, 1);
+}
+
+@keyframes dishModalUp {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(25px)
+      scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================================
+   MODAL IMAGE
+========================================================= */
+
+.dish-modal__image {
+  position: relative;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow: hidden;
+
+  background: #17120f;
+}
+
+.dish-modal__image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.dish-modal__image-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 8, 7, 0.04) 30%,
+      rgba(10, 8, 7, 0.72) 100%
+    );
+
+  pointer-events: none;
+}
+
+.dish-modal__image-caption {
+  position: absolute;
+
+  left: 28px;
+  right: 28px;
+  bottom: 25px;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  color:
+    rgba(244, 234, 217, 0.72);
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.dish-modal__close {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  z-index: 20;
+
+  width: 44px;
+  height: 44px;
+
+  display: grid;
+
+  place-items: center;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(244, 234, 217, 0.3);
+
+  background:
+    rgba(20, 15, 11, 0.62);
+
+  color: #f4ead9;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(8px);
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.dish-modal__close:hover {
+  background: #d9a441;
+
+  border-color: #d9a441;
+
+  color: #17120f;
+
+  transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   MODAL CONTENT
+========================================================= */
+
+.dish-modal__content {
+  min-width: 0;
+  min-height: 0;
+
+  padding: 64px 60px 75px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    rgba(217, 164, 65, 0.65)
+    transparent;
+}
+
+.dish-modal__content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dish-modal__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dish-modal__content::-webkit-scrollbar-thumb {
+  background:
+    rgba(217, 164, 65, 0.55);
+
+  border-radius: 20px;
+}
+
+.dish-modal__content::-webkit-scrollbar-thumb:hover {
+  background: #d9a441;
+}
+
+
+/* =========================================================
+   MODAL TEXT
+========================================================= */
+
+.dish-modal__eyebrow {
+  margin: 0 0 18px;
+
+  color: #c9858e;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.2em;
+
+  text-transform: uppercase;
+}
+
+.dish-modal__title {
+  max-width: 700px;
+
+  margin: 0;
+
+  color: #f4ead9;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(44px, 5vw, 72px);
+
+  font-weight: 400;
+
+  line-height: 0.92;
+
+  letter-spacing: -0.045em;
+}
+
+.dish-modal__description {
+  max-width: 610px;
+
+  margin: 28px 0 0;
+
+  color:
+    rgba(244, 234, 217, 0.62);
+
+  font-size: 14px;
+
+  line-height: 1.85;
+}
+
+
+/* =========================================================
+   META
+========================================================= */
+
+.dish-modal__meta {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 24px 34px;
+
+  margin-top: 32px;
+
+  padding: 22px 0;
+
+  border-top:
+    1px solid
+    rgba(244, 234, 217, 0.12);
+
+  border-bottom:
+    1px solid
+    rgba(244, 234, 217, 0.12);
+}
+
+.dish-modal__meta > div {
+  min-width: 95px;
+
+  display: grid;
+
+  grid-template-columns:
+    auto 1fr;
+
+  column-gap: 8px;
+
+  align-items: center;
+}
+
+.dish-modal__meta svg {
+  grid-row: span 2;
+
+  color: #d9a441;
+}
+
+.dish-modal__meta span {
+  color:
+    rgba(244, 234, 217, 0.38);
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+}
+
+.dish-modal__meta strong {
+  margin-top: 3px;
+
+  color: #f4ead9;
+
+  font-size: 11px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   RECIPE SECTIONS
+========================================================= */
+
+.recipe-section {
+  margin-top: 38px;
+
+  padding-top: 30px;
+
+  border-top:
+    1px solid
+    rgba(244, 234, 217, 0.12);
+}
+
+.recipe-section__eyebrow {
+  margin: 0 0 23px;
+
+  color: #d9a441;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.2em;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   INGREDIENTS
+========================================================= */
+
+.recipe-ingredients {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.recipe-ingredients li {
+  display: grid;
+
+  grid-template-columns:
+    34px 1fr;
+
+  gap: 10px;
+
+  padding: 8px 0;
+
+  border-bottom:
+    1px solid
+    rgba(244, 234, 217, 0.06);
+}
+
+.recipe-ingredients li > span {
+  color:
+    rgba(217, 164, 65, 0.75);
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 0.1em;
+}
+
+.recipe-ingredients li p {
+  margin: 0;
+
+  color:
+    rgba(244, 234, 217, 0.72);
+
+  font-size: 13px;
+
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   METHOD
+========================================================= */
+
+.recipe-steps {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.recipe-steps li {
+  display: grid;
+
+  grid-template-columns:
+    34px 1fr;
+
+  gap: 10px;
+
+  margin-bottom: 18px;
+}
+
+.recipe-steps li > span {
+  color: #c9858e;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 18px;
+}
+
+.recipe-steps li p {
+  margin: 0;
+
+  color:
+    rgba(244, 234, 217, 0.72);
+
+  font-size: 13px;
+
+  line-height: 1.75;
+}
+
+
+/* =========================================================
+   EMPTY RECIPE
+========================================================= */
+
+.recipe-section--empty p:last-child {
+  max-width: 500px;
+
+  margin: 0;
+
+  color:
+    rgba(244, 234, 217, 0.5);
+
+  font-size: 13px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+  .dishes-hero {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .dishes-catalogue {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .dishes-grid-header {
+    margin-left: 5vw;
+    margin-right: 5vw;
+  }
+
+  .dishes-grid {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .dishes-culture {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .dish-modal__content {
+    padding-left: 45px;
+    padding-right: 45px;
+  }
+}
+
+
+@media (max-width: 850px) {
+  .dishes-hero {
+    min-height: 460px;
+  }
+
+  .dishes-hero__stamp {
+    display: none;
+  }
+
+  .dishes-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .dishes-search {
+    width: 100%;
+
+    border-top:
+      1px solid
+      rgba(244, 234, 217, 0.1);
+  }
+
+  .dishes-grid {
+    grid-template-columns: 1fr;
+
+    gap: 55px;
+  }
+
+  .dish-card__image-wrap {
+    height: 390px;
+  }
+
+  .dish-card__open,
+  .dish-card__discover {
+    opacity: 1;
+
+    transform: none;
+  }
+
+  .dishes-culture {
+    display: block;
+
+    padding-top: 85px;
+    padding-bottom: 85px;
+  }
+
+  .dishes-culture__number {
+    margin-bottom: 35px;
+  }
+
+  .dishes-culture__hours {
+    margin-top: 55px;
+
+    flex-direction: row;
+
+    flex-wrap: wrap;
+
+    border-left: 0;
+
+    border-top:
+      1px solid
+      rgba(244, 234, 217, 0.16);
+
+    padding:
+      25px 0 0;
+  }
+
+  .dish-modal {
+    padding: 10px;
+  }
+
+  .dish-modal__inner {
+    width: 100%;
+    height: 94vh;
+
+    grid-template-columns: 1fr;
+
+    grid-template-rows:
+      270px minmax(0, 1fr);
+  }
+
+  .dish-modal__content {
+    padding:
+      38px 28px 55px;
+  }
+}
+
+
+@media (max-width: 560px) {
+  .dishes-hero {
+    min-height: 430px;
+
+    padding:
+      135px 24px 60px;
+  }
+
+  .dishes-hero h1 {
+    font-size: 58px;
+  }
+
+  .dishes-catalogue {
+    padding:
+      50px 24px 0;
+  }
+
+  .dishes-filter-head {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .dishes-filter-head h2 {
+    font-size: 40px;
+  }
+
+  .dishes-filters {
+    flex-wrap: nowrap;
+
+    overflow-x: auto;
+
+    margin-right: -24px;
+
+    padding-right: 24px;
+
+    scrollbar-width: none;
+  }
+
+  .dishes-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dishes-filter {
+    flex-shrink: 0;
+  }
+
+  .dishes-grid-header {
+    margin:
+      25px 24px 0;
+  }
+
+  .dishes-grid {
+    gap: 45px;
+
+    padding:
+      22px 24px 80px;
+  }
+
+  .dish-card__image-wrap {
+    height: 310px;
+  }
+
+  .dish-card__info {
+    gap: 12px;
+  }
+
+  .dish-card__name {
+    font-size: 31px;
+  }
+
+  .dish-card__type {
+    font-size: 7px;
+  }
+
+  .dishes-culture {
+    padding:
+      70px 24px;
+  }
+
+  .dishes-culture__content h2 {
+    font-size: 54px;
+  }
+
+  .dish-modal__inner {
+    height: 96vh;
+
+    grid-template-rows:
+      210px minmax(0, 1fr);
+  }
+
+  .dish-modal__close {
+    top: 12px;
+    right: 12px;
+
+    width: 38px;
+    height: 38px;
+  }
+
+  .dish-modal__content {
+    padding:
+      30px 22px 45px;
+  }
+
+  .dish-modal__title {
+    font-size: 40px;
+  }
+
+  .dish-modal__description {
+    font-size: 13px;
+  }
+
+  .dish-modal__meta {
+    gap: 18px;
+  }
+
+  .recipe-section {
+    margin-top: 30px;
+
+    padding-top: 25px;
+  }
+}
