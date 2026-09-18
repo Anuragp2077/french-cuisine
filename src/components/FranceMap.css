@@ -1,0 +1,124 @@
+.interactive-france-map {
+  position: relative;
+  width: min(100%, 520px);
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.interactive-france-map__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Default region */
+.interactive-france-map__region {
+  fill: #74483b;
+  stroke: #241b15;
+  stroke-width: 0.8;
+  cursor: pointer;
+
+  transition:
+    fill 0.3s ease,
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* Hover */
+.interactive-france-map__region:hover,
+.interactive-france-map__region.is-hovered {
+  fill: #d9a441;
+  stroke: #f4ead9;
+  stroke-width: 1.2;
+}
+
+/* Slightly fade other regions while hovering */
+.interactive-france-map:has(
+  .interactive-france-map__region.is-hovered
+)
+.interactive-france-map__region:not(.is-hovered) {
+  opacity: 0.72;
+}
+
+/* Region name */
+.interactive-france-map__tooltip {
+  position: absolute;
+  top: 20%;
+  right: -40px;
+
+  padding: 8px 12px;
+
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  color: #f4ead9;
+  background: #201814;
+  border: 1px solid rgba(244, 234, 217, 0.18);
+
+  opacity: 0;
+  transform: translateX(10px);
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+
+  z-index: 5;
+}
+
+.interactive-france-map__tooltip.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Decorative FRANCE text */
+.interactive-france-map__word {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1;
+
+  color: rgba(244, 234, 217, 0.12);
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .interactive-france-map {
+    width: min(100%, 440px);
+    height: 500px;
+  }
+
+  .interactive-france-map__tooltip {
+    right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .interactive-france-map {
+    height: 430px;
+  }
+
+  .interactive-france-map__tooltip {
+    top: 8%;
+    right: 0;
+    font-size: 0.58rem;
+  }
+
+  .interactive-france-map__word {
+    font-size: 3rem;
+  }
+}

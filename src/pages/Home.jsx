@@ -11,6 +11,7 @@ import ratatouilleImage from "../assets/home/Ratatouille.jpg";
 import boeufImage from "../assets/home/BoeufBourguignon.jpg";
 import cassouletImage from "../assets/home/cassoulet.jpg";
 import finalImage from "../assets/home/Final.jpg";
+import FranceMap from "../components/FranceMap";
 
 const dishes = [
   {
@@ -309,27 +310,8 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="home-regions__map reveal reveal--delay">
-          <div className="france-map">
-            <div className="france-map__shape" />
-
-            <div className="map-label map-label--north">
-              <i />
-              <span>NORMANDIE</span>
-            </div>
-
-            <div className="map-label map-label--center">
-              <i />
-              <span>BOURGOGNE</span>
-            </div>
-
-            <div className="map-label map-label--south">
-              <i />
-              <span>PROVENCE</span>
-            </div>
-
-            <div className="france-map__word">FRANCE</div>
-          </div>
+            <div className="home-regions__map reveal reveal--delay">
+          <FranceMap />
         </div>
       </section>
 
