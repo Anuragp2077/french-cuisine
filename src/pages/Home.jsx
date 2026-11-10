@@ -12,6 +12,7 @@ import boeufImage from "../assets/home/BoeufBourguignon.jpg";
 import cassouletImage from "../assets/home/cassoulet.jpg";
 import finalImage from "../assets/home/Final.jpg";
 import FranceMap from "../components/FranceMap";
+import GameTeaser from "../components/GameTeaser";
 
 const dishes = [
   {
@@ -170,6 +171,12 @@ export default function Home() {
 
         <div className="home-hero__year">2026</div>
       </section>
+
+      {/* =========================================================
+          GAME
+      ========================================================= */}
+
+      <GameTeaser />
 
       {/* =========================================================
           INTRO

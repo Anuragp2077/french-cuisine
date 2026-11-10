@@ -35,6 +35,11 @@ const navItems = [
     fr: "Vocabulaire",
     en: "Vocabulary",
   },
+  {
+    path: "/game",
+    fr: "Le Jeu",
+    en: "The Game",
+  },
 ];
 
 export default function Navbar() {

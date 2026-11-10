@@ -1,0 +1,378 @@
+/* =========================================================
+   HOME — LE GRAND BANQUET TEASER
+========================================================= */
+
+.home-game {
+  position: relative;
+  padding: 128px 9vw;
+  background:
+    radial-gradient(circle at 76% 30%, rgba(197, 166, 107, 0.12), transparent 46%),
+    radial-gradient(circle at 10% 82%, rgba(59, 13, 22, 0.55), transparent 50%),
+    #15100d;
+  overflow: hidden;
+}
+
+.home-game::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+.home-game__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.95fr 0.85fr;
+  align-items: center;
+  gap: 7vw;
+}
+
+/* COPY */
+
+.home-game__copy .eyebrow {
+  margin: 0 0 26px;
+}
+
+.home-game__copy h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(70px, 8.4vw, 132px);
+  font-weight: 400;
+  line-height: 0.8;
+  letter-spacing: -0.055em;
+}
+
+.home-game__copy h2 span {
+  display: block;
+  margin-left: 12%;
+  color: var(--rose);
+}
+
+.home-game__description {
+  width: min(500px, 100%);
+  margin: 30px 0 34px;
+  color: rgba(240, 233, 223, 0.62);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.home-game__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.home-game__play {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1px solid rgba(217, 164, 65, 0.9);
+  border-radius: 999px;
+  background: var(--gold);
+  color: #17100a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  transition:
+    background 0.3s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+}
+
+.home-game__play:hover {
+  background: #dcb473;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(197, 166, 107, 0.22);
+}
+
+.home-game__play:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.home-game__play:focus-visible,
+.home-game__card:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+.home-game__note {
+  color: rgba(240, 233, 223, 0.34);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* CARD */
+
+.home-game__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 26px 28px 24px;
+  border: 1px solid rgba(240, 233, 223, 0.16);
+  background:
+    linear-gradient(165deg, rgba(240, 233, 223, 0.045), transparent 46%),
+    rgba(12, 9, 8, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.36),
+    inset 0 0 0 1px rgba(197, 166, 107, 0.08);
+  overflow: hidden;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s ease;
+}
+
+.home-game__card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    #345191 0 33.3%,
+    #f0e9df 33.3% 66.6%,
+    #a83447 66.6% 100%
+  );
+  opacity: 0.85;
+}
+
+.home-game__card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(197, 166, 107, 0.45);
+}
+
+.home-game__card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 20px;
+  border-bottom: 1px solid rgba(240, 233, 223, 0.1);
+  color: rgba(240, 233, 223, 0.4);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.home-game__runs {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-game__run {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 0;
+  border-bottom: 1px solid rgba(240, 233, 223, 0.08);
+}
+
+.home-game__run-index {
+  color: var(--gold);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.home-game__run-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.home-game__run-name strong {
+  font-family: var(--serif);
+  font-size: clamp(23px, 2.4vw, 30px);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.home-game__run-name small {
+  color: rgba(240, 233, 223, 0.38);
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.home-game__run-pace {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.home-game__run-pace i {
+  width: 12px;
+  height: 2px;
+  background: rgba(240, 233, 223, 0.14);
+}
+
+.home-game__run-pace i.is-on {
+  background: var(--gold);
+}
+
+.home-game__foods {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 18px 4px 16px;
+}
+
+.home-game__food {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.home-game__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(240, 233, 223, 0.1);
+  color: var(--cream);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: gap 0.35s ease, color 0.3s ease;
+}
+
+.home-game__card:hover .home-game__cta {
+  gap: 20px;
+  color: #f4e4c8;
+}
+
+.home-game__cta svg {
+  color: var(--rose);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-game__card:hover .home-game__cta svg {
+  transform: translateX(4px);
+}
+
+/* motion — a slow drift on the dish line, only when motion is welcome */
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-game__food {
+    animation: home-game-drift 6.5s ease-in-out infinite;
+  }
+
+  .home-game__food:nth-child(2) {
+    animation-delay: -1.1s;
+  }
+
+  .home-game__food:nth-child(3) {
+    animation-delay: -2.2s;
+  }
+
+  .home-game__food:nth-child(4) {
+    animation-delay: -3.2s;
+  }
+
+  .home-game__food:nth-child(5) {
+    animation-delay: -4.3s;
+  }
+
+  .home-game__food:nth-child(6) {
+    animation-delay: -5.1s;
+  }
+}
+
+@keyframes home-game-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+  .home-game {
+    padding: 106px 8vw;
+  }
+
+  .home-game__inner {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+
+  .home-game__copy h2 {
+    font-size: clamp(68px, 12vw, 104px);
+  }
+
+  .home-game__copy h2 span {
+    margin-left: 8%;
+  }
+
+  .home-game__card {
+    max-width: 620px;
+  }
+}
+
+@media (max-width: 560px) {
+  .home-game {
+    padding: 88px 22px;
+  }
+
+  .home-game__copy h2 {
+    font-size: clamp(58px, 17vw, 82px);
+  }
+
+  .home-game__copy h2 span {
+    margin-left: 0;
+  }
+
+  .home-game__description {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .home-game__card {
+    padding: 22px 20px 20px;
+  }
+
+  .home-game__run {
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px;
+    padding: 15px 0;
+  }
+
+  .home-game__run-name strong {
+    font-size: 22px;
+  }
+
+  .home-game__run-name small {
+    font-size: 13px;
+  }
+
+  .home-game__foods {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+}

@@ -1,0 +1,115 @@
+/* =========================================================
+   MOTION LAYER
+   A single orchestrated entrance for the home hero, staggered
+   reveals for the editorial grids, and a reduced-motion escape.
+========================================================= */
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero__image {
+    animation: hero-soften 2.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .home-hero__content > * {
+    animation: hero-rise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .home-hero__content > :nth-child(1) {
+    animation-delay: 0.12s;
+  }
+
+  .home-hero__content > :nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .home-hero__content > :nth-child(3) {
+    animation-delay: 0.36s;
+  }
+
+  .home-hero__content > :nth-child(4) {
+    animation-delay: 0.48s;
+  }
+
+  .home-hero__meta,
+  .home-hero__year {
+    animation: hero-fade 1.4s ease 0.7s both;
+  }
+
+  .dish-grid > .reveal:nth-child(2) {
+    transition-delay: 0.12s;
+  }
+
+  .dish-grid > .reveal:nth-child(3) {
+    transition-delay: 0.24s;
+  }
+
+  .dish-card__info h3 {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .dish-card:hover .dish-card__info h3 {
+    transform: translateX(5px);
+  }
+
+  .home-dishes__footer .text-link svg,
+  .home-final .editorial-button svg {
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-dishes__footer .text-link:hover svg,
+  .home-final .editorial-button:hover svg {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-soften {
+  from {
+    opacity: 0.35;
+    filter: saturate(0.5) contrast(1.05) blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    filter: saturate(0.72) contrast(1.05) blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

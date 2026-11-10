@@ -8,6 +8,7 @@ import Dishes from "./pages/Dishes";
 import Cooking from "./pages/Cooking";
 import Pastries from "./pages/Pastries";
 import Vocabulary from "./pages/Vocabulary";
+import Game from "./pages/game";
 
 import { LanguageProvider } from "./context/LanguageContext";
 
@@ -27,6 +28,7 @@ function App() {
               <Route path="/cooking" element={<Cooking />} />
               <Route path="/pastries" element={<Pastries />} />
               <Route path="/vocabulary" element={<Vocabulary />} />
+              <Route path="/game" element={<Game />} />
             </Routes>
           </main>
         </div>
