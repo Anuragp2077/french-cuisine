@@ -1,10 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import { ArrowLeft, RefreshCw, Wifi, WifiOff } from "lucide-react";
+import { ArrowLeft, RefreshCw, Wifi } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 import {
   fetchLeaderboard,
-  isRemote,
   POLL_MS,
 } from "../lib/leaderboard";
 import "./Leaderboard.css";
@@ -74,15 +73,9 @@ export default function Leaderboard() {
           </p>
 
           <div className="leaderboard-status">
-            {isRemote() ? (
-              <span className="leaderboard-status__pill is-live">
-                <Wifi size={12} /> {t("En ligne", "Live")}
-              </span>
-            ) : (
-              <span className="leaderboard-status__pill is-demo">
-                <WifiOff size={12} /> {t("Démo locale", "Local demo")}
-              </span>
-            )}
+            <span className="leaderboard-status__pill is-live">
+              <Wifi size={12} /> {t("En ligne", "Live")}
+            </span>
 
             <button
               type="button"
@@ -171,14 +164,6 @@ export default function Leaderboard() {
           </p>
         )}
 
-        {!isRemote() && (
-          <p className="leaderboard-hint">
-            {t(
-              "Mode démo : les scores sont stockés sur cet appareil. Pour le classement partagé de la classe, configurez VITE_LEADERBOARD_URL (voir docs/leaderboard-setup.md).",
-              "Demo mode: scores are stored on this device. For the shared class leaderboard, set VITE_LEADERBOARD_URL (see docs/leaderboard-setup.md)."
-            )}
-          </p>
-        )}
       </section>
     </main>
   );

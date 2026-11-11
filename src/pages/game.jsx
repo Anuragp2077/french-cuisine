@@ -66,6 +66,7 @@ export default function Game() {
   const [nameInput, setNameInput] = useState("");
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState("");
 
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
@@ -89,6 +90,7 @@ export default function Game() {
           setResult(stats);
           setPhase(completed ? "complete" : "over");
           setScoreSubmitted(false);
+          setSubmissionError("");
           setNameInput(playerName);
 
           const record = bestRef.current[stats.difficulty];
@@ -238,8 +240,13 @@ export default function Game() {
     const name = (nameInput || "").trim();
     if (!name) return;
     setSubmitting(true);
+    setSubmissionError("");
     try {
-      localStorage.setItem(NAME_KEY, name);
+      try {
+        localStorage.setItem(NAME_KEY, name);
+      } catch {
+        /* Saving the player's name must not prevent score submission. */
+      }
       setPlayerName(name);
       await submitScore({
         name,
@@ -250,9 +257,10 @@ export default function Game() {
         stars: result.stars || 0,
       });
       setScoreSubmitted(true);
-    } catch {
-      /* still mark as submitted locally to avoid spam */
-      setScoreSubmitted(true);
+    } catch (error) {
+      setSubmissionError(
+        error instanceof Error ? error.message : "Score submission failed"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -585,6 +593,12 @@ export default function Game() {
                         {t("Voir le classement", "See leaderboard")}
                       </Link>
                     </span>
+                  )}
+                  {submissionError && (
+                    <p className="game-submit__error" role="alert">
+                      {t("Échec de l'envoi :", "Score submission failed:")}{" "}
+                      {submissionError}
+                    </p>
                   )}
                 </div>
 

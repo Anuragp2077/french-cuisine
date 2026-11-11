@@ -1307,3 +1307,10 @@
   color: var(--gold);
   text-decoration: underline;
 }
+
+.game-submit__error {
+  flex-basis: 100%;
+  margin: 0;
+  color: #e08a8a;
+  font-size: 12px;
+}
