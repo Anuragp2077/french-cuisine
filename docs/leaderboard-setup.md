@@ -1,9 +1,9 @@
 # Leaderboard setup
 
 The site submits scores to the LEADR client API and refreshes the board every
-five seconds. The game ID and board short code are configured in
-`src/lib/leaderboard.js`; the integration creates a client session and obtains
-a nonce before each score submission.
+five seconds. The API host, game ID, and board UUID are configured in
+`src/lib/leaderboard.js`. The integration creates a client session, obtains a
+single-use nonce before each score submission, and refreshes expired sessions.
 
 No LEADR admin API key belongs in browser code or a `VITE_` variable. Browser
 bundles are public. If the client API requires admin credentials, use a

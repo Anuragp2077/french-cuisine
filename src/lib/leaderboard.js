@@ -1,21 +1,65 @@
 const POLL_MS = 5000;
-const LEADR_API_BASE = "https://api.leadr.gg/v1/client";
-const LEADR_BOARD_CODE = "SEQRS";
+const LEADR_API_BASE = "https://api.leadrcloud.com/v1/client";
+const LEADR_BOARD_ID = "brd_23d3513d-066a-4bd4-9211-95393b130756";
 const LEADR_GAME_ID = "gam_29f0a126-9f19-4a61-9916-6794b4b490a9";
+const DEVICE_ID_KEY = "french-cuisine-leadr-device-id";
 
-let leadrSessionToken = null;
+let leadrSession = null;
 let leadrSessionPromise = null;
+let leadrRefreshPromise = null;
+let fingerprintPromise = null;
+
+async function getClientFingerprint() {
+  if (!fingerprintPromise) {
+    fingerprintPromise = (async () => {
+      let deviceId;
+      try {
+        deviceId = localStorage.getItem(DEVICE_ID_KEY);
+        if (!deviceId) {
+          deviceId = crypto.randomUUID();
+          localStorage.setItem(DEVICE_ID_KEY, deviceId);
+        }
+      } catch {
+        deviceId = crypto.randomUUID();
+      }
+
+      const digest = await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(deviceId)
+      );
+      return Array.from(new Uint8Array(digest), (byte) =>
+        byte.toString(16).padStart(2, "0")
+      ).join("");
+    })();
+  }
+
+  return fingerprintPromise;
+}
+
+function storeSession(data) {
+  if (!data.access_token || !data.refresh_token) {
+    throw new Error("LEADR session response did not include both session tokens");
+  }
+
+  leadrSession = {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: Date.now() + (Number(data.expires_in) || 900) * 1000,
+  };
+}
 
 async function initLeadSession() {
   if (leadrSessionPromise) return leadrSessionPromise;
 
   leadrSessionPromise = (async () => {
+    const fingerprint = await getClientFingerprint();
     const response = await fetch(`${LEADR_API_BASE}/sessions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         game_id: LEADR_GAME_ID,
-        client_fingerprint: "french-cuisine-build",
+        client_fingerprint: fingerprint,
+        platform: "web",
       }),
     });
 
@@ -24,12 +68,8 @@ async function initLeadSession() {
     }
 
     const data = await response.json();
-    leadrSessionToken = data.access_token ?? data.token;
-    if (!leadrSessionToken) {
-      throw new Error("LEADR session response did not include an access token");
-    }
-
-    return leadrSessionToken;
+    storeSession(data);
+    return leadrSession;
   })();
 
   try {
@@ -40,62 +80,145 @@ async function initLeadSession() {
   }
 }
 
+async function refreshLeadSession() {
+  if (leadrRefreshPromise) return leadrRefreshPromise;
+
+  leadrRefreshPromise = (async () => {
+    if (!leadrSession) return initLeadSession();
+
+    const response = await fetch(`${LEADR_API_BASE}/sessions/refresh`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${leadrSession.refreshToken}` },
+    });
+
+    if (!response.ok) {
+      leadrSession = null;
+      leadrSessionPromise = null;
+      return initLeadSession();
+    }
+
+    const data = await response.json();
+    storeSession(data);
+    return leadrSession;
+  })();
+
+  try {
+    return await leadrRefreshPromise;
+  } finally {
+    leadrRefreshPromise = null;
+  }
+}
+
+async function getLeadSession() {
+  if (!leadrSession || Date.now() >= leadrSession.expiresAt - 30_000) {
+    return leadrSession ? refreshLeadSession() : initLeadSession();
+  }
+
+  return leadrSession;
+}
+
 export async function getLeadNonce() {
-  const token = leadrSessionToken || (await initLeadSession());
-  const response = await fetch(`${LEADR_API_BASE}/nonce`, {
-    headers: { Authorization: `Bearer ${token}` },
+  let session = await getLeadSession();
+  let response = await fetch(`${LEADR_API_BASE}/nonce`, {
+    headers: { Authorization: `Bearer ${session.accessToken}` },
   });
+
+  if (response.status === 401) {
+    session = await refreshLeadSession();
+    response = await fetch(`${LEADR_API_BASE}/nonce`, {
+      headers: { Authorization: `Bearer ${session.accessToken}` },
+    });
+  }
 
   if (!response.ok) {
     throw new Error(`LEADR nonce request failed (${response.status})`);
   }
 
   const data = await response.json();
-  if (!data.nonce) {
-    throw new Error("LEADR nonce response did not include a nonce");
+  if (!data.nonce_value) {
+    throw new Error("LEADR nonce response did not include a nonce value");
   }
 
-  return data.nonce;
+  return data.nonce_value;
 }
 
 export async function fetchLeaderboard() {
-  const token = leadrSessionToken || (await initLeadSession());
-  const response = await fetch(
-    `${LEADR_API_BASE}/boards/${encodeURIComponent(LEADR_BOARD_CODE)}/scores?limit=50`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  let session = await getLeadSession();
+  const rows = [];
+  let cursor = null;
 
-  if (!response.ok) {
-    throw new Error(`LEADR leaderboard request failed (${response.status})`);
-  }
+  do {
+    const params = new URLSearchParams({
+      board_id: LEADR_BOARD_ID,
+      limit: "100",
+      sort: "value:desc,created_at:asc",
+    });
+    if (cursor) params.set("cursor", cursor);
 
-  const data = await response.json();
-  return normalizeRows(data?.scores ?? data?.rows ?? data);
+    let response = await fetch(`${LEADR_API_BASE}/scores?${params}`, {
+      headers: { Authorization: `Bearer ${session.accessToken}` },
+    });
+    if (response.status === 401) {
+      session = await refreshLeadSession();
+      response = await fetch(`${LEADR_API_BASE}/scores?${params}`, {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+    }
+
+    if (!response.ok) {
+      throw new Error(`LEADR leaderboard request failed (${response.status})`);
+    }
+
+    const data = await response.json();
+    rows.push(...(Array.isArray(data?.data) ? data.data : []));
+    cursor = data?.pagination?.has_next
+      ? data.pagination.next_cursor
+      : null;
+  } while (cursor);
+
+  return normalizeRows(rows);
 }
 
 export async function submitScore(entry) {
   const row = normalizeEntry(entry);
-  const nonce = await getLeadNonce();
-  const response = await fetch(`${LEADR_API_BASE}/scores`, {
+  let session = await getLeadSession();
+  let nonce = await getLeadNonce();
+  const body = JSON.stringify({
+    board_id: LEADR_BOARD_ID,
+    player_name: row.name,
+    value: row.score,
+    value_display: String(row.score),
+    metadata: {
+      difficulty: row.difficulty,
+      distance: row.distance,
+      food: row.food,
+      stars: row.stars,
+    },
+  });
+
+  let response = await fetch(`${LEADR_API_BASE}/scores`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${leadrSessionToken}`,
+      Authorization: `Bearer ${session.accessToken}`,
       "leadr-client-nonce": nonce,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      board_id: LEADR_BOARD_CODE,
-      player_name: row.name,
-      value: row.score,
-      value_display: row.score,
-      metadata: {
-        difficulty: row.difficulty,
-        distance: row.distance,
-        food: row.food,
-        stars: row.stars,
-      },
-    }),
+    body,
   });
+
+  if (response.status === 401) {
+    session = await refreshLeadSession();
+    nonce = await getLeadNonce();
+    response = await fetch(`${LEADR_API_BASE}/scores`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "leadr-client-nonce": nonce,
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+  }
 
   if (!response.ok) {
     throw new Error(`LEADR score submission failed (${response.status})`);
