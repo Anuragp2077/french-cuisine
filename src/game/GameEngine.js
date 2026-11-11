@@ -1,9 +1,27 @@
 import { FOOD_ICONS, drawFoodIcon } from "./foodArt";
+import {
+  BOSS_MILESTONES,
+  bossPunch,
+  createBoss,
+  drawBoss,
+  drawBossHud,
+  drawHazards,
+  drawRing,
+  updateBoss,
+  updateHazards,
+} from "./bosses";
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const lerp = (from, to, amount) => from + (to - from) * amount;
 const rand = (min, max) => min + Math.random() * (max - min);
 const PX_PER_METER = 34;
+
+const PICKUPS = {
+  coffee: { icon: "coffee", label: "SPRINT", color: "#d9a441" },
+  baguette: { icon: "baguette", label: "BOUCLIER", color: "#f0e9df" },
+  camembert: { icon: "camembert", label: "AIMANT", color: "#d88996" },
+  brulee: { icon: "brulee", label: "+150", color: "#c5a66b" },
+};
 
 const hash = (n) => {
   const value = Math.sin(n * 127.1 + 311.7) * 43758.5453;
@@ -94,7 +112,7 @@ class Sfx {
     osc.stop(start + dur + 0.03);
   }
 
-  noise({ dur = 0.25, gain = 0.35 } = {}) {
+  noise({ dur = 0.25, gain = 0.35, freq = 900 } = {}) {
     if (!this.enabled) {
       return;
     }
@@ -118,7 +136,7 @@ class Sfx {
 
     const filter = this.ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.value = 900;
+    filter.frequency.value = freq;
 
     const envelope = this.ctx.createGain();
     envelope.gain.value = gain;
@@ -179,6 +197,68 @@ class Sfx {
           });
         });
         break;
+      /* — the ring — */
+      case "bossIntro":
+        /* musette waltz, three beats, slightly flat like a café accordion */
+        [392, 494, 587].forEach((freq, index) => {
+          this.tone({
+            freq,
+            dur: 0.26,
+            type: "sawtooth",
+            gain: 0.13,
+            delay: index * 0.17,
+          });
+          this.tone({
+            freq: freq * 1.006,
+            dur: 0.24,
+            type: "triangle",
+            gain: 0.1,
+            delay: index * 0.17 + 0.01,
+          });
+        });
+        this.tone({ freq: 98, dur: 0.5, type: "sine", gain: 0.18, delay: 0.34 });
+        break;
+      case "punch":
+        this.tone({ freq: 210, to: 70, dur: 0.09, type: "square", gain: 0.24 });
+        this.noise({ dur: 0.07, gain: 0.22, freq: 1600 });
+        break;
+      case "whack":
+        this.noise({ dur: 0.12, gain: 0.34, freq: 2100 });
+        this.tone({ freq: 320, to: 150, dur: 0.08, type: "triangle", gain: 0.18 });
+        break;
+      case "thud":
+        this.tone({ freq: 96, to: 42, dur: 0.22, type: "sine", gain: 0.34 });
+        this.noise({ dur: 0.16, gain: 0.2, freq: 400 });
+        break;
+      case "boing":
+        this.tone({ freq: 260, to: 820, dur: 0.2, type: "triangle", gain: 0.18 });
+        break;
+      case "cork":
+        this.tone({ freq: 780, to: 190, dur: 0.08, type: "square", gain: 0.2 });
+        this.noise({ dur: 0.05, gain: 0.16, freq: 2400 });
+        break;
+      case "whoosh":
+        this.noise({ dur: 0.22, gain: 0.16, freq: 700 });
+        break;
+      case "pouet":
+        this.tone({ freq: 440, dur: 0.09, type: "square", gain: 0.16 });
+        this.tone({ freq: 554, dur: 0.11, type: "square", gain: 0.16, delay: 0.1 });
+        break;
+      case "bell":
+        this.tone({ freq: 1560, dur: 0.07, type: "triangle", gain: 0.22 });
+        this.tone({ freq: 2080, dur: 0.09, type: "triangle", gain: 0.16, delay: 0.06 });
+        break;
+      case "coo":
+        this.tone({ freq: 640, to: 430, dur: 0.2, type: "sine", gain: 0.14 });
+        this.tone({ freq: 600, to: 400, dur: 0.22, type: "sine", gain: 0.12, delay: 0.22 });
+        break;
+      case "ko":
+        this.tone({ freq: 84, to: 38, dur: 0.7, type: "sine", gain: 0.34 });
+        this.noise({ dur: 0.4, gain: 0.22, freq: 1200 });
+        [523, 659, 784].forEach((freq, index) => {
+          this.tone({ freq, dur: 0.22, type: "triangle", gain: 0.14, delay: 0.3 + index * 0.1 });
+        });
+        break;
       default:
         break;
     }
@@ -208,13 +288,13 @@ export const DIFFICULTIES = {
     copyEn:
       "The gentlest service: an easy pace and wide arcs of pastries.",
     speed: 336,
-    length: 420,
+    length: 1100,
     hearts: 3,
     density: 0.8,
     pace: 1,
     accent: "#d88996",
     foods: ["croissant", "baguette", "chouquette", "coffee", "macaron", "crepe"],
-    stars: [10, 20, 30],
+    stars: [24, 48, 70],
     sky: ["#1a1020", "#43121c", "#8a4a3a"],
     ground: "#20150f",
     far: "#2a1524",
@@ -232,13 +312,13 @@ export const DIFFICULTIES = {
     copyEn:
       "The rhythm of a busy day: quiches, croques and cheese in sequence.",
     speed: 382,
-    length: 540,
+    length: 1500,
     hearts: 3,
     density: 0.94,
     pace: 2,
     accent: "#c5a66b",
     foods: ["quiche", "croque", "camembert", "baguette", "wine", "crepe"],
-    stars: [12, 24, 36],
+    stars: [32, 64, 92],
     sky: ["#101a26", "#2c3b45", "#8a6a42"],
     ground: "#191410",
     far: "#1d2a33",
@@ -256,13 +336,13 @@ export const DIFFICULTIES = {
     copyEn:
       "The gala service: faster, tighter, with the great dishes.",
     speed: 428,
-    length: 660,
+    length: 2100,
     hearts: 3,
     density: 1,
     pace: 3,
     accent: "#d9a441",
     foods: ["stew", "brulee", "wine", "camembert", "quiche", "baguette"],
-    stars: [16, 30, 44],
+    stars: [48, 90, 130],
     sky: ["#0b1020", "#241a33", "#5c2a3c"],
     ground: "#161017",
     far: "#181a2c",
@@ -315,6 +395,27 @@ export class GameEngine {
     this.camera = { x: 0 };
     this.player = null;
     this.lastStats = null;
+    this.boss = null;
+    this.ring = null;
+    this.hazards = [];
+    this.bossIndex = 0;
+    this.bossMilestones = [];
+    this.bossIntroTimer = 0;
+    this.bossWinTimer = 0;
+    this.moveDir = 0;
+    this.punchTimer = 0;
+    this.punchCooldown = 0;
+    this.shield = false;
+    this.boostTimer = 0;
+    this.magnetTimer = 0;
+    this.slideTimer = 0;
+    this.slideCooldown = 0;
+    this.pickups = [];
+    this.overheads = [];
+    this.pickupX = 0;
+    this.overheadX = 0;
+    this.rage = 0;
+    this.rageReady = false;
 
     this.handleKeyDown = (event) => this.onKeyDown(event);
     this.handleKeyUp = (event) => this.onKeyUp(event);
@@ -361,7 +462,8 @@ export class GameEngine {
 
   speedNow() {
     const progress = clamp(this.distance / this.cfg.length, 0, 1);
-    return this.cfg.speed * this.speedScale * (1 + progress * 0.14);
+    const boost = this.boostTimer > 0 ? 1.26 : 1;
+    return this.cfg.speed * this.speedScale * (1 + progress * 0.14) * boost;
   }
 
   resize() {
@@ -453,6 +555,27 @@ export class GameEngine {
     this.arriveTimer = 0;
     this.statTimer = 0;
     this.lastStats = null;
+    this.boss = null;
+    this.ring = null;
+    this.hazards = [];
+    this.bossIndex = 0;
+    this.bossMilestones = BOSS_MILESTONES.filter((mark) => mark < cfg.length - 60);
+    this.bossIntroTimer = 0;
+    this.bossWinTimer = 0;
+    this.moveDir = 0;
+    this.punchTimer = 0;
+    this.punchCooldown = 0;
+    this.shield = false;
+    this.boostTimer = 0;
+    this.magnetTimer = 0;
+    this.slideTimer = 0;
+    this.slideCooldown = 0;
+    this.pickups = [];
+    this.overheads = [];
+    this.rage = 0;
+    this.rageReady = false;
+    this.pickupX = this.pxPerMeter() * 80;
+    this.overheadX = this.pxPerMeter() * 120;
 
     this.emitStats(true);
   }
@@ -492,7 +615,10 @@ export class GameEngine {
   }
 
   setPaused(paused) {
-    if (paused && (this.state === "running" || this.state === "attract")) {
+    if (
+      paused &&
+      (this.state === "running" || this.state === "attract" || this.bossActive())
+    ) {
       this.prevState = this.state;
       this.state = "paused";
       this.emit("paused");
@@ -518,7 +644,7 @@ export class GameEngine {
       return;
     }
 
-    if (this.state !== "running") {
+    if (this.state !== "running" && this.state !== "bossFight") {
       return;
     }
 
@@ -527,6 +653,84 @@ export class GameEngine {
 
   releaseJump() {
     this.held = false;
+  }
+
+  pressSlide() {
+    if (this.state !== "running" && this.state !== "bossFight") {
+      return;
+    }
+
+    const player = this.player;
+
+    if (!player || !player.grounded || this.slideCooldown > 0) {
+      return;
+    }
+
+    this.slideTimer = 0.55;
+    this.slideCooldown = 0.9;
+    player.squash = 0.18;
+    this.spawnDust(player.x + player.w / 2, player.y + player.h, 4);
+    this.sfx.play("whoosh");
+  }
+
+  bossActive() {
+    return (
+      this.state === "bossIntro" ||
+      this.state === "bossFight" ||
+      this.state === "bossWin"
+    );
+  }
+
+  setMove(direction) {
+    this.moveDir = clamp(direction, -1, 1);
+  }
+
+  pressPunch() {
+    if (this.state !== "bossFight" || this.punchCooldown > 0) {
+      return;
+    }
+
+    const superPunch = this.rageReady;
+
+    this.punchCooldown = superPunch ? 0.5 : 0.36;
+    this.punchTimer = superPunch ? 0.3 : 0.24;
+    this.rageReady = false;
+
+    if (superPunch) {
+      this.rage = 0;
+      this.shake = this.reduced ? 0 : 16;
+      this.sfx.play("ko");
+      this.spawnText(
+        this.player.x + this.player.w / 2,
+        this.player.y - 10,
+        "COLÈRE !",
+        "#d9a441"
+      );
+    } else {
+      this.sfx.play("punch");
+    }
+
+    bossPunch(this, superPunch);
+  }
+
+  addRage(amount) {
+    if (this.rageReady) {
+      return;
+    }
+
+    this.rage = clamp(this.rage + amount, 0, 1);
+
+    if (this.rage >= 1) {
+      this.rageReady = true;
+      this.spawnText(
+        this.player.x + this.player.w / 2,
+        this.player.y - 12,
+        "COLÈRE PRÊTE",
+        "#d9a441"
+      );
+      this.sfx.play("bell");
+      this.emitStats(true);
+    }
   }
 
   /* -------------------------------------------------------
@@ -550,14 +754,38 @@ export class GameEngine {
 
     if (code === "ArrowDown" || code === "KeyS") {
       event.preventDefault();
-      this.fastFall = true;
+
+      if (this.player && this.player.grounded) {
+        this.pressSlide();
+      } else {
+        this.fastFall = true;
+      }
+
+      return;
+    }
+
+    if (code === "ArrowLeft" || code === "KeyA") {
+      event.preventDefault();
+      this.moveDir = -1;
+      return;
+    }
+
+    if (code === "ArrowRight" || code === "KeyD") {
+      event.preventDefault();
+      this.moveDir = 1;
+      return;
+    }
+
+    if (code === "KeyJ" || code === "KeyF" || code === "KeyX") {
+      event.preventDefault();
+      this.pressPunch();
       return;
     }
 
     if (code === "Escape" || code === "KeyP") {
       event.preventDefault();
 
-      if (this.state === "running" || this.state === "paused") {
+      if (this.state === "running" || this.state === "paused" || this.bossActive()) {
         this.togglePause();
       }
     }
@@ -575,6 +803,18 @@ export class GameEngine {
 
     if (event.code === "ArrowDown" || event.code === "KeyS") {
       this.fastFall = false;
+    }
+
+    if (event.code === "ArrowLeft" || event.code === "KeyA") {
+      if (this.moveDir < 0) {
+        this.moveDir = 0;
+      }
+    }
+
+    if (event.code === "ArrowRight" || event.code === "KeyD") {
+      if (this.moveDir > 0) {
+        this.moveDir = 0;
+      }
     }
   }
 
@@ -619,6 +859,7 @@ export class GameEngine {
     }
 
     player.squash = -0.16;
+    this.slideTimer = 0;
     this.jumpBuffer = 0;
     this.coyote = 0;
     return true;
@@ -634,6 +875,26 @@ export class GameEngine {
     while (this.genX < untilX && guard < 40) {
       this.spawnPattern(this.genX);
       guard += 1;
+    }
+
+    while (this.pickupX < untilX) {
+      this.spawnPickup(this.pickupX);
+      this.pickupX += this.pxPerMeter() * rand(95, 150);
+    }
+
+    /* a guaranteed low sign now and then, so sliding always has a job */
+    while (this.overheadX < untilX) {
+      const blocked = this.obstacles.some(
+        (obstacle) =>
+          Math.abs(obstacle.x - this.overheadX) < this.playerH * 2.2 ||
+          Math.abs(obstacle.x + obstacle.w - this.overheadX) < this.playerH * 2.2
+      );
+
+      if (!blocked) {
+        this.addOverhead(this.overheadX, Math.random() < 0.5 ? "sign" : "ham");
+      }
+
+      this.overheadX += this.pxPerMeter() * rand(135, 200);
     }
   }
 
@@ -707,10 +968,39 @@ export class GameEngine {
     return top;
   }
 
+  addOverhead(x, kind) {
+    const ph = this.playerH;
+    const width = kind === "ham" ? ph * 0.76 : ph * 1.02;
+    const height = kind === "ham" ? ph * 0.5 : ph * 0.44;
+    const gap = ph * 0.6;
+
+    this.overheads.push({
+      x,
+      y: this.groundY - gap - height,
+      w: width,
+      h: height,
+      kind,
+      seed: rand(0, 10),
+    });
+  }
+
+  spawnPickup(x) {
+    const keys = Object.keys(PICKUPS);
+    const kind = keys[Math.floor(rand(0, keys.length))];
+
+    this.pickups.push({
+      x,
+      y: this.groundY - this.playerH * rand(1.15, 2.05),
+      kind,
+      phase: rand(0, Math.PI * 2),
+      dead: false,
+    });
+  }
+
   spawnPattern(x) {
     const cfg = this.cfg;
     const progress = clamp(this.distance / cfg.length, 0, 1);
-    const density = cfg.density + progress * 0.24;
+    const density = cfg.density + progress * 0.16;
     const playerH = this.playerH;
     const speed = this.speedNow();
     const roll = Math.random();
@@ -741,7 +1031,7 @@ export class GameEngine {
       this.addObstacle(x, "stack");
       this.addFoodArc(x - playerH * 0.2, playerH * 1.4, 2, 2.5);
       width = playerH * 0.8;
-    } else if (roll < 0.9 && this.difficultyKey !== "breakfast") {
+    } else if (roll < 0.84 && this.difficultyKey !== "breakfast") {
       /* Two obstacles in a row, only once the pace has warmed up. */
       const gap = playerH * (1.35 + rand(0, 0.25));
       const kind = ["crate", "pot"][Math.floor(rand(0, 2))];
@@ -750,6 +1040,14 @@ export class GameEngine {
       this.addObstacle(x + gap, kind);
       this.addFoodArc(x - playerH * 0.2, gap + playerH * 0.9, 3, 1.5);
       width = gap;
+    } else if (
+      roll < 0.95 &&
+      (this.difficultyKey !== "breakfast" || progress > 0.5)
+    ) {
+      /* a sign hung low enough that only a slide gets under it */
+      width = playerH * 2.1;
+      this.addOverhead(x, Math.random() < 0.5 ? "sign" : "ham");
+      this.addFoodArc(x - playerH * 0.4, playerH * 0.9, 2, 0.5);
     } else if (this.difficultyKey === "dinner") {
       /* Three small pots — a rhythm test, reserved for the dinner service. */
       const gap = playerH * 1.45;
@@ -824,6 +1122,10 @@ export class GameEngine {
     const running = this.state === "running";
     const attract = this.state === "attract";
     const arriving = this.state === "arriving";
+    const bossing =
+      this.state === "bossIntro" ||
+      this.state === "bossFight" ||
+      this.state === "bossWin";
 
     let speed = 0;
 
@@ -844,18 +1146,37 @@ export class GameEngine {
       }
     }
 
-    player.x += speed * dt;
-    this.camera.x = player.x - this.camOffset;
+    if (!bossing) {
+      player.x += speed * dt;
+      this.camera.x = player.x - this.camOffset;
+    }
 
     if (running) {
       this.distance = (player.x - this.startX) / this.pxPerMeter();
 
-      if (this.distance >= cfg.length) {
+      if (
+        this.bossIndex < this.bossMilestones.length &&
+        this.distance >= this.bossMilestones[this.bossIndex]
+      ) {
+        this.beginBoss();
+      }
+
+      if (this.state === "running" && this.distance >= cfg.length) {
         this.arrive();
       }
     }
 
-    player.run += dt * (speed / (this.playerH * 3.4));
+    if (bossing) {
+      player.x += this.moveDir * this.playerH * 7.4 * dt;
+      player.x = clamp(
+        player.x,
+        this.ring.left + 6,
+        this.ring.right - player.w - 6
+      );
+      player.run += dt * Math.abs(this.moveDir) * 5.2;
+    } else {
+      player.run += dt * (speed / (this.playerH * 3.4));
+    }
 
     /* ----- physics ----- */
     const gravity = 4400 * (this.playerH / 70);
@@ -929,6 +1250,30 @@ export class GameEngine {
 
     player.squash = lerp(player.squash, 0, Math.min(1, dt * 10));
 
+    if (this.slideTimer > 0) {
+      this.slideTimer = Math.max(0, this.slideTimer - dt);
+
+      if (!player.grounded) {
+        this.slideTimer = 0;
+      }
+
+      if (this.slideTimer <= 0) {
+        player.squash = 0;
+      }
+    }
+
+    if (this.slideCooldown > 0) {
+      this.slideCooldown = Math.max(0, this.slideCooldown - dt);
+    }
+
+    if (this.boostTimer > 0) {
+      this.boostTimer = Math.max(0, this.boostTimer - dt);
+    }
+
+    if (this.magnetTimer > 0) {
+      this.magnetTimer = Math.max(0, this.magnetTimer - dt);
+    }
+
     if (player.grounded) {
       this.coyote = 0.09;
     } else {
@@ -941,6 +1286,10 @@ export class GameEngine {
       if (player.grounded || this.coyote > 0 || player.jumps === 1) {
         this.doJump();
       }
+    }
+
+    if (this.bossActive()) {
+      this.updateBossPhase(dt);
     }
 
     /* ----- combo timer ----- */
@@ -966,16 +1315,13 @@ export class GameEngine {
     }
 
     /* ----- content ----- */
-    this.generate(this.camera.x + this.w * 2.2);
+    if (!bossing) {
+      this.generate(this.camera.x + this.w * 2.2);
+    }
 
     /* ----- collisions ----- */
     if (running) {
-      const box = {
-        x: player.x + player.w * 0.24,
-        y: player.y + player.h * 0.05,
-        w: player.w * 0.52,
-        h: player.h * 0.9,
-      };
+      const box = this.playerBox();
 
       for (const obstacle of this.obstacles) {
         const obstacleX = obstacle.x + obstacle.w * 0.1;
@@ -994,9 +1340,35 @@ export class GameEngine {
         break;
       }
 
+      for (const overhead of this.overheads) {
+        if (
+          overhead.x > box.x + box.w ||
+          overhead.x + overhead.w < box.x ||
+          overhead.y > box.y + box.h ||
+          overhead.y + overhead.h < box.y
+        ) {
+          continue;
+        }
+
+        this.hit();
+        break;
+      }
+
       for (const food of this.foods) {
         if (food.dead) {
           continue;
+        }
+
+        if (this.magnetTimer > 0) {
+          const pullX = player.x + player.w / 2 - food.x;
+          const pullY = player.y + player.h * 0.5 - food.y;
+          const pullDistance = Math.hypot(pullX, pullY);
+
+          if (pullDistance < this.playerH * 5.5 && pullDistance > 1) {
+            const pull = Math.min(1, (this.playerH * 8 * dt) / pullDistance);
+            food.x += pullX * pull;
+            food.y += pullY * pull;
+          }
         }
 
         const dx = food.x - (player.x + player.w / 2);
@@ -1005,6 +1377,19 @@ export class GameEngine {
         if (dx * dx + dy * dy < Math.pow(this.playerH * 0.56, 2)) {
           food.dead = true;
           this.collect(food);
+        }
+      }
+
+      for (const pickup of this.pickups) {
+        if (pickup.dead) {
+          continue;
+        }
+
+        const dx = pickup.x - (player.x + player.w / 2);
+        const dy = pickup.y - (player.y + player.h * 0.5);
+
+        if (dx * dx + dy * dy < Math.pow(this.playerH * 0.72, 2)) {
+          this.collectPickup(pickup);
         }
       }
     } else if (attract) {
@@ -1026,6 +1411,12 @@ export class GameEngine {
     this.foods = this.foods.filter(
       (food) => !food.dead && food.x > this.camera.x - 200
     );
+    this.pickups = this.pickups.filter(
+      (pickup) => !pickup.dead && pickup.x > this.camera.x - 220
+    );
+    this.overheads = this.overheads.filter(
+      (overhead) => overhead.x + overhead.w > this.camera.x - 260
+    );
     this.obstacles = this.obstacles.filter(
       (obstacle) => obstacle.x + obstacle.w > this.camera.x - 260
     );
@@ -1033,11 +1424,32 @@ export class GameEngine {
       (platform) => platform.x + platform.w > this.camera.x - 260
     );
 
+    if (
+      this.ring &&
+      !this.bossActive() &&
+      this.camera.x > this.ring.right + 280
+    ) {
+      this.ring = null;
+    }
+
     this.updateParticles(dt);
 
-    if (running) {
+    if (running || this.bossActive()) {
       this.emitStats();
     }
+  }
+
+  playerBox() {
+    const player = this.player;
+    const sliding = this.slideTimer > 0;
+    const height = player.h * (sliding ? 0.47 : 0.9);
+
+    return {
+      x: player.x + player.w * 0.24,
+      y: player.y + player.h - height,
+      w: player.w * 0.52,
+      h: height,
+    };
   }
 
   collect(food) {
@@ -1052,15 +1464,77 @@ export class GameEngine {
     this.emitStats(true);
   }
 
+  collectPickup(pickup) {
+    pickup.dead = true;
+    this.spawnSpark(pickup.x, pickup.y, 14, PICKUPS[pickup.kind].color);
+    this.sfx.play("collect", 3);
+
+    if (pickup.kind === "coffee") {
+      this.boostTimer = 4.5;
+      this.spawnText(pickup.x, pickup.y - 12, "SPRINT", "#d9a441");
+    } else if (pickup.kind === "baguette") {
+      this.shield = true;
+      this.spawnText(pickup.x, pickup.y - 12, "BOUCLIER", "#f0e9df");
+    } else if (pickup.kind === "camembert") {
+      this.magnetTimer = 6;
+      this.spawnText(pickup.x, pickup.y - 12, "AIMANT", "#d88996");
+    } else {
+      this.score += 150;
+      this.spawnText(pickup.x, pickup.y - 12, "+150", "#c5a66b");
+    }
+
+    this.emitStats(true);
+  }
+
+  spawnText(x, y, text, color) {
+    this.addParticle({
+      type: "text",
+      x,
+      y,
+      vx: rand(-8, 8),
+      vy: -74,
+      life: 0.95,
+      max: 0.95,
+      size: clamp(this.playerH * 0.2, 11, 15),
+      color: color || "#f0e9df",
+      text,
+      gravity: 0,
+      rot: 0,
+      vr: 0,
+      drag: 1.1,
+    });
+  }
+
   hit() {
     const player = this.player;
 
-    if (this.state !== "running" || player.invuln > 0) {
+    if (
+      (this.state !== "running" && this.state !== "bossFight") ||
+      player.invuln > 0
+    ) {
+      return;
+    }
+
+    /* a baguette takes the hit instead of a heart */
+    if (this.shield) {
+      this.shield = false;
+      player.invuln = 1.3;
+      this.shake = this.reduced ? 0 : 10;
+      this.flash = 0.5;
+      this.sfx.play("boing");
+      this.spawnSpark(
+        player.x + player.w * 0.5,
+        player.y + player.h * 0.4,
+        14,
+        "#f0e9df"
+      );
+      this.spawnText(player.x + player.w / 2, player.y - 6, "BOUCLIER", "#f0e9df");
+      this.emitStats(true);
       return;
     }
 
     this.hearts -= 1;
-    player.invuln = 2.2;
+    player.invuln = this.state === "bossFight" ? 1.6 : 2.2;
     this.shake = this.reduced ? 0 : 18;
     this.slow = 0.35;
     this.slowTimer = 0.22;
@@ -1093,6 +1567,129 @@ export class GameEngine {
     this.state = "over";
     this.sfx.play("lose");
     this.emit("gameover", this.buildStats(false));
+  }
+
+  /* -------------------------------------------------------
+     LE RING
+  ------------------------------------------------------- */
+
+  beginBoss() {
+    const tier = this.bossIndex;
+    const width = Math.min(this.w * 0.9, this.playerH * 19);
+    const center = this.camera.x + this.w / 2;
+
+    this.bossIndex += 1;
+    this.ring = {
+      left: center - width / 2,
+      right: center + width / 2,
+      width,
+    };
+
+    const from = this.ring.left - this.playerH * 3;
+    const to = this.ring.right + this.playerH * 3;
+
+    this.obstacles = this.obstacles.filter(
+      (obstacle) => obstacle.x + obstacle.w < from || obstacle.x > to
+    );
+    this.platforms = this.platforms.filter(
+      (platform) => platform.x + platform.w < from || platform.x > to
+    );
+    this.foods = this.foods.filter((food) => food.x < from || food.x > to);
+    this.pickups = this.pickups.filter(
+      (pickup) => pickup.x < from || pickup.x > to
+    );
+    this.overheads = [];
+    this.hazards = [];
+
+    this.player.x = this.ring.left + width * 0.16;
+    this.player.y = this.groundY - this.player.h;
+    this.player.vy = 0;
+    this.player.grounded = true;
+    this.player.platform = null;
+    this.player.jumps = 0;
+    this.player.invuln = Math.max(this.player.invuln, 0.6);
+    this.player.run = 0;
+
+    /* the crowd carries him into the ring: never start a fight on one heart */
+    this.hearts = Math.max(this.hearts, 2);
+
+    this.boss = createBoss(this, tier);
+    this.state = "bossIntro";
+    this.bossIntroTimer = 2.6;
+    this.moveDir = 0;
+    this.punchTimer = 0;
+    this.punchCooldown = 0;
+    this.shake = this.reduced ? 0 : 12;
+
+    this.sfx.play("bossIntro");
+    this.emit("bossstart", { tier });
+    this.emitStats(true);
+  }
+
+  updateBossPhase(dt) {
+    if (this.punchCooldown > 0) {
+      this.punchCooldown = Math.max(0, this.punchCooldown - dt);
+    }
+
+    if (this.punchTimer > 0) {
+      this.punchTimer = Math.max(0, this.punchTimer - dt);
+    }
+
+    if (this.state === "bossIntro") {
+      this.bossIntroTimer -= dt;
+
+      if (this.boss) {
+        updateBoss(this, this.boss, dt);
+      }
+
+      if (this.bossIntroTimer <= 0) {
+        this.state = "bossFight";
+        this.bossIntroTimer = 0;
+        this.sfx.play("bell");
+        this.emitStats(true);
+      }
+
+      return;
+    }
+
+    if (this.state === "bossWin") {
+      this.bossWinTimer -= dt;
+
+      if (this.boss) {
+        updateBoss(this, this.boss, dt);
+      }
+
+      if (this.bossWinTimer <= 0) {
+        this.resumeRun();
+      }
+
+      return;
+    }
+
+    if (this.boss) {
+      updateBoss(this, this.boss, dt);
+    }
+
+    updateHazards(this, dt);
+  }
+
+  resumeRun() {
+    const player = this.player;
+
+    this.state = "running";
+    this.boss = null;
+    this.hazards = [];
+    this.bossWinTimer = 0;
+    this.moveDir = 0;
+    this.slideTimer = 0;
+    this.slideCooldown = 0;
+    this.startX = player.x - this.distance * this.pxPerMeter();
+    this.genX = player.x + this.speedNow() * 2.4;
+    this.camera.x = player.x - this.camOffset;
+    player.invuln = Math.max(player.invuln, 1.4);
+
+    this.emit("bossend");
+    this.emitStats(true);
   }
 
   buildStats(completed) {
@@ -1145,8 +1742,23 @@ export class GameEngine {
       score: Math.round(this.score),
       hearts: this.hearts,
       multiplier: this.multiplier,
+      rage: this.rage,
+      rageReady: this.rageReady,
+      shield: this.shield,
+      boost: this.boostTimer > 0,
+      magnet: this.magnetTimer > 0,
       progress: clamp(this.distance / this.cfg.length, 0, 1),
       length: this.cfg.length,
+      boss: this.boss
+        ? {
+            hp: this.boss.hp,
+            maxHp: this.boss.maxHp,
+            round: this.boss.tier + 1,
+            nameFr: this.boss.def.nameFr,
+            nameEn: this.boss.def.nameEn,
+            fighting: this.state === "bossFight",
+          }
+        : null,
     };
 
     this.lastStats = stats;
@@ -1361,9 +1973,18 @@ export class GameEngine {
     this.drawGround(cfg);
     this.drawSteam();
     this.drawFinish();
+    drawRing(this);
     this.drawPlatforms();
     this.drawObstacles();
+    this.drawOverheads();
     this.drawFoods();
+    this.drawPickups();
+    drawHazards(this);
+
+    if (this.boss) {
+      drawBoss(this, this.boss);
+    }
+
     this.drawParticles();
     this.drawPlayer();
     ctx.restore();
@@ -1379,9 +2000,14 @@ export class GameEngine {
       this.state === "running" ||
       this.state === "arriving" ||
       this.state === "over" ||
-      this.state === "complete"
+      this.state === "complete" ||
+      this.bossActive()
     ) {
       this.drawHud();
+    }
+
+    if (this.boss) {
+      drawBossHud(this);
     }
   }
 
@@ -1829,6 +2455,142 @@ export class GameEngine {
     }
   }
 
+  drawOverheads() {
+    const ctx = this.ctx;
+    const ph = this.playerH;
+    const beamY = this.groundY - ph * 2.8;
+
+    for (const overhead of this.overheads) {
+      const x = overhead.x - this.camera.x;
+
+      if (x + overhead.w < -140 || x > this.w + 140) {
+        continue;
+      }
+
+      ctx.fillStyle = "#2b1d15";
+      ctx.fillRect(x - ph * 0.4, beamY, overhead.w + ph * 0.8, ph * 0.09);
+      ctx.fillStyle = "rgba(197,166,107,0.45)";
+      ctx.fillRect(x - ph * 0.4, beamY, overhead.w + ph * 0.8, 1.5);
+
+      const sway = Math.sin(this.time * 1.2 + overhead.seed) * 1.5;
+
+      ctx.save();
+      ctx.translate(x + overhead.w / 2 + sway, 0);
+
+      ctx.strokeStyle = "rgba(240,233,223,0.22)";
+      ctx.lineWidth = 1.3;
+
+      for (const side of [-1, 1]) {
+        ctx.beginPath();
+        ctx.moveTo(side * overhead.w * 0.3, beamY + ph * 0.09);
+        ctx.lineTo(side * overhead.w * 0.3, overhead.y);
+        ctx.stroke();
+      }
+
+      ctx.translate(-overhead.w / 2, 0);
+
+      if (overhead.kind === "ham") {
+        ctx.fillStyle = "#a85a4a";
+        ctx.beginPath();
+        ctx.ellipse(
+          overhead.w / 2,
+          overhead.y + overhead.h * 0.55,
+          overhead.w * 0.42,
+          overhead.h * 0.44,
+          0.1,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.fillStyle = "#e8c39a";
+        ctx.beginPath();
+        ctx.arc(
+          overhead.w / 2 + overhead.w * 0.3,
+          overhead.y + overhead.h * 0.2,
+          overhead.h * 0.1,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.fillStyle = "rgba(240,233,223,0.22)";
+        ctx.beginPath();
+        ctx.ellipse(
+          overhead.w * 0.36,
+          overhead.y + overhead.h * 0.42,
+          overhead.w * 0.12,
+          overhead.h * 0.16,
+          0.3,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      } else {
+        ctx.fillStyle = "#3a2418";
+        roundRect(ctx, 0, overhead.y, overhead.w, overhead.h, 3);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(217,164,65,0.7)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = "#d9a441";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = `700 ${Math.max(6, Math.round(overhead.h * 0.24))}px Inter, Arial, sans-serif`;
+        ctx.fillText(
+          overhead.seed > 5 ? "PAIN" : "JAMBON",
+          overhead.w / 2,
+          overhead.y + overhead.h * 0.5
+        );
+      }
+
+      ctx.restore();
+    }
+  }
+
+  drawPickups() {
+    const ctx = this.ctx;
+    const size = this.playerH * 0.46;
+
+    for (const pickup of this.pickups) {
+      const x = pickup.x - this.camera.x;
+
+      if (x < -80 || x > this.w + 80) {
+        continue;
+      }
+
+      const def = PICKUPS[pickup.kind];
+      const y = pickup.y + Math.sin(this.time * 2.2 + pickup.phase) * 4;
+
+      ctx.save();
+      ctx.translate(x, y);
+
+      const glow = ctx.createRadialGradient(0, 0, 2, 0, 0, size * 1.6);
+      glow.addColorStop(0, this.alphaColor(def.color, 0.45));
+      glow.addColorStop(1, this.alphaColor(def.color, 0));
+      ctx.fillStyle = glow;
+      ctx.fillRect(-size * 1.7, -size * 1.7, size * 3.4, size * 3.4);
+
+      ctx.fillStyle = "rgba(12,8,6,0.48)";
+      ctx.beginPath();
+      ctx.arc(0, 0, size * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = this.alphaColor(def.color, 0.8);
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+
+      drawFoodIcon(ctx, def.icon, 0, 0, size, {
+        rotation: Math.sin(this.time * 1.4 + pickup.phase) * 0.08,
+      });
+
+      ctx.fillStyle = def.color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = `700 ${Math.max(7, Math.round(size * 0.32))}px Inter, Arial, sans-serif`;
+      ctx.fillText(def.label, 0, size * 1.02);
+
+      ctx.restore();
+    }
+  }
+
   drawParticles() {
     const ctx = this.ctx;
 
@@ -1868,6 +2630,12 @@ export class GameEngine {
         ctx.rotate(particle.rot);
         ctx.fillRect(-particle.size / 2, -particle.size / 4, particle.size, particle.size * 0.5);
         ctx.restore();
+      } else if (particle.type === "text") {
+        ctx.fillStyle = particle.color;
+        ctx.font = `700 ${Math.round(particle.size)}px Inter, Arial, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(particle.text, x, particle.y);
       } else if (particle.type === "confetti") {
         ctx.fillStyle = particle.color;
         ctx.save();
@@ -1916,12 +2684,17 @@ export class GameEngine {
       ctx.beginPath();
       ctx.arc(0, -H * 0.5, W * 0.95, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.globalAlpha = 1;
     }
 
     const squash = player.squash;
 
     ctx.rotate(lean);
     ctx.scale(1 - squash, 1 + squash);
+
+    if (this.slideTimer > 0) {
+      ctx.scale(1.18, 0.56);
+    }
 
     const hipY = -H * 0.44;
     const shoulderY = -H * 0.79;
@@ -2068,6 +2841,37 @@ export class GameEngine {
     ctx.arc(H * 0.07, headY + H * 0.045, H * 0.035, 0.25, Math.PI - 0.2);
     ctx.stroke();
 
+    /* the jab */
+    if (this.punchTimer > 0) {
+      const phase = 1 - this.punchTimer / 0.24;
+      const reach = Math.sin(clamp(phase, 0, 1) * Math.PI);
+      const fistX = W * 0.5 + W * 0.62 * reach;
+      const fistY = shoulderY + H * 0.24;
+
+      ctx.strokeStyle = "#1c2740";
+      ctx.lineWidth = H * 0.09;
+      ctx.beginPath();
+      ctx.moveTo(W * 0.32, shoulderY + H * 0.1);
+      ctx.lineTo(fistX, fistY);
+      ctx.stroke();
+
+      ctx.fillStyle = "#e3bd98";
+      roundRect(ctx, fistX - H * 0.02, fistY - H * 0.055, H * 0.1, H * 0.11, H * 0.035);
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(240,233,223,0.5)";
+      ctx.lineWidth = 2;
+
+      for (let i = 0; i < 3; i += 1) {
+        const lineY = fistY - H * 0.06 + i * H * 0.06;
+
+        ctx.beginPath();
+        ctx.moveTo(fistX + H * 0.12, lineY);
+        ctx.lineTo(fistX + H * 0.12 + H * 0.12 * reach, lineY);
+        ctx.stroke();
+      }
+    }
+
     ctx.restore();
   }
 
@@ -2104,6 +2908,8 @@ export class GameEngine {
       );
     }
 
+    /* the ring keeps only the hearts: the scorecard owns the rest */
+    if (!this.bossActive()) {
     /* collected dishes + combo */
     const foodY = pad + toqueSize + smallFont + 12;
 
@@ -2127,6 +2933,46 @@ export class GameEngine {
       ctx.textAlign = "center";
       ctx.font = `700 ${Math.round(smallFont * 0.95)}px Inter, Arial, sans-serif`;
       ctx.fillText(`×${this.multiplier}`, badgeX + 17, foodY + 1);
+
+      ctx.fillStyle = "rgba(217,164,65,0.16)";
+      ctx.fillRect(badgeX, foodY + 12, 34, 2);
+      ctx.fillStyle = "rgba(217,164,65,0.8)";
+      ctx.fillRect(badgeX, foodY + 12, 34 * clamp(this.comboTimer / 1.8, 0, 1), 2);
+    }
+
+    /* active pickups */
+    const chips = [];
+
+    if (this.shield) {
+      chips.push({ label: "BOUCLIER", color: "#f0e9df" });
+    }
+
+    if (this.boostTimer > 0) {
+      chips.push({ label: `SPRINT ${Math.ceil(this.boostTimer)}s`, color: "#d9a441" });
+    }
+
+    if (this.magnetTimer > 0) {
+      chips.push({ label: `AIMANT ${Math.ceil(this.magnetTimer)}s`, color: "#d88996" });
+    }
+
+    let chipX = pad;
+
+    for (const chip of chips) {
+      const chipWidth = 12 + chip.label.length * smallFont * 0.6;
+
+      ctx.fillStyle = "rgba(10,8,7,0.45)";
+      roundRect(ctx, chipX, foodY + 20, chipWidth, 16, 8);
+      ctx.fill();
+      ctx.strokeStyle = this.alphaColor(chip.color, 0.5);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.fillStyle = chip.color;
+      ctx.textAlign = "center";
+      ctx.font = `700 ${Math.round(smallFont * 0.78)}px Inter, Arial, sans-serif`;
+      ctx.fillText(chip.label, chipX + chipWidth / 2, foodY + 28);
+
+      chipX += chipWidth + 6;
     }
 
     /* score */
@@ -2142,34 +2988,37 @@ export class GameEngine {
       this.w - pad,
       pad + 12 + clamp(this.h * 0.045, 20, 32) * 0.62
     );
+    }
 
-    /* progress */
-    const barWidth = Math.min(this.w * 0.38, 360);
-    const barX = (this.w - barWidth) / 2;
-    const barY = pad + 10;
-    const progress = clamp(this.distance / cfg.length, 0, 1);
+    /* progress — the ring borrows this band for the scorecard */
+    if (!this.bossActive()) {
+      const barWidth = Math.min(this.w * 0.38, 360);
+      const barX = (this.w - barWidth) / 2;
+      const barY = pad + 10;
+      const progress = clamp(this.distance / cfg.length, 0, 1);
 
-    ctx.fillStyle = "rgba(240,233,223,0.14)";
-    roundRect(ctx, barX, barY, barWidth, 4, 2);
-    ctx.fill();
+      ctx.fillStyle = "rgba(240,233,223,0.14)";
+      roundRect(ctx, barX, barY, barWidth, 4, 2);
+      ctx.fill();
 
-    const fill = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
-    fill.addColorStop(0, "rgba(216,137,150,0.9)");
-    fill.addColorStop(1, "rgba(217,164,65,0.95)");
-    ctx.fillStyle = fill;
-    roundRect(ctx, barX, barY, Math.max(4, barWidth * progress), 4, 2);
-    ctx.fill();
+      const fill = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
+      fill.addColorStop(0, "rgba(216,137,150,0.9)");
+      fill.addColorStop(1, "rgba(217,164,65,0.95)");
+      ctx.fillStyle = fill;
+      roundRect(ctx, barX, barY, Math.max(4, barWidth * progress), 4, 2);
+      ctx.fill();
 
-    drawFoodIcon(ctx, "brulee", barX + barWidth + 14, barY + 2, 16, { alpha: 0.7 });
+      drawFoodIcon(ctx, "brulee", barX + barWidth + 14, barY + 2, 16, { alpha: 0.7 });
 
-    ctx.fillStyle = "rgba(240,233,223,0.55)";
-    ctx.textAlign = "center";
-    ctx.font = `600 ${Math.round(smallFont * 0.8)}px Inter, Arial, sans-serif`;
-    ctx.fillText(
-      `${Math.round(this.distance)} / ${cfg.length} M`,
-      barX + barWidth / 2,
-      barY + 18
-    );
+      ctx.fillStyle = "rgba(240,233,223,0.55)";
+      ctx.textAlign = "center";
+      ctx.font = `600 ${Math.round(smallFont * 0.8)}px Inter, Arial, sans-serif`;
+      ctx.fillText(
+        `${Math.round(this.distance)} / ${cfg.length} M`,
+        barX + barWidth / 2,
+        barY + 18
+      );
+    }
 
     ctx.restore();
   }
