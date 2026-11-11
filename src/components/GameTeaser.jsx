@@ -24,8 +24,8 @@ export default function GameTeaser() {
 
           <p className="home-game__description">
             {t(
-              "Trois services, un président, et tous les plats de ce site à attraper au vol. Une course d'arcade à jouer ici, dans votre navigateur.",
-              "Three services, one president, and every dish on this site to catch mid-air. An arcade run you can play right here in your browser."
+              "Trois services, un président, tous les plats du site à attraper au vol — et tous les cent mètres un Français furieux à affronter sur le ring. Une course d'arcade à jouer ici, dans votre navigateur.",
+              "Three services, one president, every dish on this site to catch mid-air — and every hundred metres an angry Frenchman waiting in the ring. An arcade run you can play right here in your browser."
             )}
           </p>
 
