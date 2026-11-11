@@ -46,6 +46,7 @@ export default function Game() {
     multiplier: 1,
     progress: 0,
     length: DIFFICULTIES[DEFAULT_DIFFICULTY].length,
+    boss: null,
   });
   const [result, setResult] = useState(null);
   const [best, setBest] = useState(readBest);
@@ -206,6 +207,18 @@ export default function Game() {
     engineRef.current?.releaseJump();
   };
 
+  const move = (direction) => {
+    engineRef.current?.setMove(direction);
+  };
+
+  const punch = () => {
+    engineRef.current?.pressPunch();
+  };
+
+  const slide = () => {
+    engineRef.current?.pressSlide();
+  };
+
   const bestOverall = Math.max(
     0,
     ...DIFFICULTY_KEYS.map((key) => best[key]?.score || 0)
@@ -232,8 +245,8 @@ export default function Game() {
           <div className="game-hero__row">
             <p>
               {t(
-                "Emmanuel Macron traverse la France au rythme du service. Sautez par-dessus les casseroles, attrapez les plats de la maison et arrivez à table avant la fin du service.",
-                "Emmanuel Macron crosses France at the pace of service. Jump the pots, catch the house dishes and reach the table before service ends."
+                "Macron court, saute, glisse sous les enseignes, attrape les bonus, et tous les cent mètres un Français furieux monte sur le ring. Sautez sur sa tête, frappez au corps, puis reprenez la course.",
+                "Macron runs, jumps, slides under the shop signs, grabs the bonuses — and every hundred metres an angry Frenchman steps into the ring. Stomp his head, punch the body, then get back to the run."
               )}
             </p>
 
@@ -272,8 +285,8 @@ export default function Game() {
 
                 <p>
                   {t(
-                    "Un bouton. Des plats à attraper. Une arrivée à table.",
-                    "One button. Dishes to catch. One table to reach."
+                    "Des plats à attraper, trois ou quatre rounds au ring, et une arrivée à table.",
+                    "Dishes to catch, three or four ring fights, one table to reach."
                   )}
                 </p>
 
@@ -286,6 +299,12 @@ export default function Game() {
                   {isTouch
                     ? t("Touchez pour sauter", "Tap to jump")
                     : t("Espace ou ↑ pour sauter", "Space or ↑ to jump")}
+                  <em>
+                    {t(
+                      "↓ glisser sous les enseignes · Ring : A / D se déplacer, J frapper",
+                      "↓ slide under the signs · Ring: A / D move, J punch"
+                    )}
+                  </em>
                 </span>
               </div>
             </div>
@@ -323,6 +342,86 @@ export default function Game() {
               <span>{t("SAUTER", "JUMP")}</span>
             </button>
           )}
+
+          {(isTouch || isCompact) &&
+            (phase === "playing" || phase === "countdown") &&
+            !hud.boss?.fighting && (
+              <button
+                type="button"
+                className="game-slide"
+                aria-label={t("Glisser", "Slide")}
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  slide();
+                }}
+                onContextMenu={(event) => event.preventDefault()}
+              >
+                <span>{t("GLISSER", "SLIDE")}</span>
+              </button>
+            )}
+
+          {(isTouch || isCompact) &&
+            phase === "playing" &&
+            hud.boss?.fighting && (
+              <div className="game-fight">
+                <div className="game-fight__moves">
+                  <button
+                    type="button"
+                    className="game-fight__move"
+                    aria-label={t("Reculer", "Move back")}
+                    onPointerDown={(event) => {
+                      event.preventDefault();
+                      move(-1);
+                    }}
+                    onPointerUp={() => move(0)}
+                    onPointerCancel={() => move(0)}
+                    onPointerLeave={() => move(0)}
+                    onContextMenu={(event) => event.preventDefault()}
+                  >
+                    ←
+                  </button>
+
+                  <button
+                    type="button"
+                    className="game-fight__move"
+                    aria-label={t("Avancer", "Move forward")}
+                    onPointerDown={(event) => {
+                      event.preventDefault();
+                      move(1);
+                    }}
+                    onPointerUp={() => move(0)}
+                    onPointerCancel={() => move(0)}
+                    onPointerLeave={() => move(0)}
+                    onContextMenu={(event) => event.preventDefault()}
+                  >
+                    →
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  className={`game-fight__punch${
+                    hud.rageReady ? " is-charged" : ""
+                  }`}
+                  aria-label={
+                    hud.rageReady
+                      ? t("Coup de colère", "Rage punch")
+                      : t("Frapper", "Punch")
+                  }
+                  onPointerDown={(event) => {
+                    event.preventDefault();
+                    punch();
+                  }}
+                  onContextMenu={(event) => event.preventDefault()}
+                >
+                  <span>
+                    {hud.rageReady
+                      ? t("SUPER", "SUPER")
+                      : t("COUP", "PUNCH")}
+                  </span>
+                </button>
+              </div>
+            )}
 
           {phase === "paused" && (
             <div className="game-overlay game-overlay--pause">
@@ -364,7 +463,7 @@ export default function Game() {
                 <span className="game-kicker">
                   {result.completed
                     ? t("SERVICE TERMINÉ", "SERVICE COMPLETE")
-                    : t("SERVICE INTERRUPTU", "SERVICE INTERRUPTED")}
+                    : t("SERVICE INTERROMPU", "SERVICE INTERRUPTED")}
                 </span>
 
                 <h2 className="game-panel__title">
@@ -443,12 +542,12 @@ export default function Game() {
           <div className="game-cabinet__hint">
             {isTouch
               ? t(
-                  "Touchez l'écran ou le bouton pour sauter. Re-touchez en l'air pour le double saut.",
-                  "Tap the screen or the button to jump. Tap again in the air to double jump."
+                  "Touchez pour sauter, GLISSER pour passer sous les enseignes. Au ring : ← → pour bouger, sautez sur sa tête, remplissez la COLÈRE pour un super coup.",
+                  "Tap to jump, SLIDE to pass under the shop signs. At the ring: ← → to move, jump on his head, fill RAGE for a super punch."
                 )
               : t(
-                  "Espace ou ↑ : sauter · re-saut en l'air · ↓ : descendre · P : pause",
-                  "Space or ↑: jump · second jump in the air · ↓: drop · P: pause"
+                  "Espace / ↑ : sauter · ↓ : glisser · A / D : se déplacer au ring · J : frapper · P : pause",
+                  "Space / ↑: jump · ↓: slide · A / D: move in the ring · J: punch · P: pause"
                 )}
           </div>
 
