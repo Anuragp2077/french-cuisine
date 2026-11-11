@@ -12,12 +12,14 @@ import {
 import { useLanguage } from "../context/LanguageContext";
 import { DIFFICULTIES, DIFFICULTY_KEYS, GameEngine } from "../game/GameEngine";
 import { FOOD_ICONS } from "../game/foodArt";
+import { submitScore } from "../lib/leaderboard";
 import FoodGlyph from "../game/FoodGlyph";
 import "./game.css";
 
 const BEST_KEY = "french-cuisine-game-best";
 const SOUND_KEY = "french-cuisine-game-sound";
 const DEFAULT_DIFFICULTY = "lunch";
+const NAME_KEY = "french-cuisine-player-name";
 
 function readBest() {
   try {
@@ -54,6 +56,16 @@ export default function Game() {
   const [countdown, setCountdown] = useState(3);
   const [isTouch, setIsTouch] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
+  const [playerName, setPlayerName] = useState(() => {
+    try {
+      return localStorage.getItem(NAME_KEY) || "";
+    } catch {
+      return "";
+    }
+  });
+  const [nameInput, setNameInput] = useState("");
+  const [scoreSubmitted, setScoreSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
@@ -76,6 +88,8 @@ export default function Game() {
 
           setResult(stats);
           setPhase(completed ? "complete" : "over");
+          setScoreSubmitted(false);
+          setNameInput(playerName);
 
           const record = bestRef.current[stats.difficulty];
 
@@ -123,7 +137,7 @@ export default function Game() {
         delete window.__banquetGame;
       }
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const query = window.matchMedia("(pointer: coarse)");
@@ -217,6 +231,31 @@ export default function Game() {
 
   const slide = () => {
     engineRef.current?.pressSlide();
+  };
+
+  const handleSubmitScore = async () => {
+    if (!result || submitting) return;
+    const name = (nameInput || "").trim();
+    if (!name) return;
+    setSubmitting(true);
+    try {
+      localStorage.setItem(NAME_KEY, name);
+      setPlayerName(name);
+      await submitScore({
+        name,
+        difficulty: result.difficulty,
+        score: result.score,
+        distance: result.distance,
+        food: result.food,
+        stars: result.stars || 0,
+      });
+      setScoreSubmitted(true);
+    } catch {
+      /* still mark as submitted locally to avoid spam */
+      setScoreSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const bestOverall = Math.max(
@@ -516,6 +555,38 @@ export default function Game() {
                         best[result.difficulty]?.score ?? "—"
                       }`}
                 </p>
+
+                <div className="game-submit">
+                  {!scoreSubmitted ? (
+                    <>
+                      <input
+                        type="text"
+                        className="game-submit__input"
+                        placeholder={t("Votre pseudo", "Your name")}
+                        value={nameInput}
+                        onChange={(e) => setNameInput(e.target.value)}
+                        maxLength={24}
+                      />
+                      <button
+                        type="button"
+                        className="game-submit__btn"
+                        onClick={handleSubmitScore}
+                        disabled={submitting || !nameInput.trim()}
+                      >
+                        {submitting
+                          ? t("Envoi…", "Sending…")
+                          : t("Envoyer le score", "Submit score")}
+                      </button>
+                    </>
+                  ) : (
+                    <span className="game-submit__done">
+                      {t("Score envoyé !", "Score submitted!")}{" "}
+                      <Link to="/leaderboard">
+                        {t("Voir le classement", "See leaderboard")}
+                      </Link>
+                    </span>
+                  )}
+                </div>
 
                 <div className="game-panel__actions">
                   <button type="button" className="game-play" onClick={beginRun}>

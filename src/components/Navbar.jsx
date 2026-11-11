@@ -40,6 +40,11 @@ const navItems = [
     fr: "Le Jeu",
     en: "The Game",
   },
+  {
+    path: "/leaderboard",
+    fr: "Classement",
+    en: "Leaderboard",
+  },
 ];
 
 export default function Navbar() {

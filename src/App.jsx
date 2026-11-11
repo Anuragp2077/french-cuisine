@@ -9,6 +9,7 @@ import Cooking from "./pages/Cooking";
 import Pastries from "./pages/Pastries";
 import Vocabulary from "./pages/Vocabulary";
 import Game from "./pages/game";
+import Leaderboard from "./pages/Leaderboard";
 
 import { LanguageProvider } from "./context/LanguageContext";
 
@@ -29,6 +30,7 @@ function App() {
               <Route path="/pastries" element={<Pastries />} />
               <Route path="/vocabulary" element={<Vocabulary />} />
               <Route path="/game" element={<Game />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
             </Routes>
           </main>
         </div>

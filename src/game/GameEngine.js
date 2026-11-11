@@ -740,6 +740,17 @@ export class GameEngine {
   onKeyDown(event) {
     const code = event.code;
 
+    // During result screen or name submission, only allow Escape/P to navigate away
+    if (this.state === "over" || this.state === "complete") {
+      if (code === "Escape" || code === "KeyP") {
+        event.preventDefault();
+        if (this.state === "paused" || this.state === "complete") {
+          this.togglePause();
+        }
+      }
+      return;
+    }
+
     if (code === "Space" || code === "ArrowUp" || code === "KeyW") {
       event.preventDefault();
 
@@ -792,6 +803,14 @@ export class GameEngine {
   }
 
   onKeyUp(event) {
+    // During result screen, ignore game controls; only Escape/P navigates
+    if (this.state === "over" || this.state === "complete") {
+      if (event.code === "Escape" || event.code === "KeyP") {
+        this.togglePause();
+      }
+      return;
+    }
+
     if (
       event.code === "Space" ||
       event.code === "ArrowUp" ||
