@@ -1,0 +1,220 @@
+.leaderboard-page {
+  min-height: 100vh;
+  background: var(--black);
+  color: var(--cream);
+}
+
+.leaderboard-hero {
+  padding: 140px 8vw 60px;
+  background: linear-gradient(180deg, var(--brown) 0%, var(--black) 100%);
+}
+
+.leaderboard-hero__inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.leaderboard-hero h1 {
+  margin: 18px 0 14px;
+  font-family: var(--serif);
+  font-size: clamp(60px, 9vw, 120px);
+  font-weight: 400;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+}
+
+.leaderboard-hero h1 span {
+  display: block;
+  color: var(--rose);
+}
+
+.leaderboard-hero__copy {
+  max-width: 560px;
+  color: rgba(240, 233, 223, 0.62);
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0 0 22px;
+}
+
+.leaderboard-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.leaderboard-status__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+}
+
+.leaderboard-status__pill.is-live {
+  background: rgba(90, 170, 120, 0.15);
+  color: #9fd6b0;
+  border: 1px solid rgba(90, 170, 120, 0.4);
+}
+
+.leaderboard-status__pill.is-demo {
+  background: rgba(197, 166, 107, 0.12);
+  color: var(--gold);
+  border: 1px solid rgba(197, 166, 107, 0.35);
+}
+
+.leaderboard-refresh {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(240, 233, 223, 0.25);
+  background: transparent;
+  color: var(--cream);
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.leaderboard-refresh:hover {
+  background: rgba(240, 233, 223, 0.08);
+  transform: rotate(90deg);
+}
+
+.leaderboard-status__time {
+  font-size: 11px;
+  color: rgba(240, 233, 223, 0.45);
+  letter-spacing: 0.08em;
+}
+
+.leaderboard-body {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 8vw 100px;
+}
+
+.leaderboard-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.leaderboard-filter {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(240, 233, 223, 0.18);
+  background: transparent;
+  color: rgba(240, 233, 223, 0.6);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.leaderboard-filter.is-active {
+  background: var(--rose);
+  color: var(--black);
+  border-color: var(--rose);
+}
+
+.leaderboard-table {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 44px 1.4fr 1fr 90px 100px 70px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(240, 233, 223, 0.04);
+  border: 1px solid rgba(240, 233, 223, 0.06);
+  font-size: 13px;
+}
+
+.leaderboard-row--head {
+  background: transparent;
+  border: none;
+  color: rgba(240, 233, 223, 0.45);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.leaderboard-row.is-top {
+  background: rgba(216, 137, 150, 0.08);
+  border-color: rgba(216, 137, 150, 0.25);
+}
+
+.leaderboard-rank {
+  font-family: var(--serif);
+  font-size: 18px;
+  text-align: center;
+}
+
+.leaderboard-name {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.leaderboard-diff {
+  color: rgba(240, 233, 223, 0.55);
+  font-size: 12px;
+}
+
+.leaderboard-score {
+  font-family: var(--serif);
+  font-size: 20px;
+  color: var(--gold);
+  text-align: right;
+}
+
+.leaderboard-empty {
+  padding: 60px 0;
+  text-align: center;
+  color: rgba(240, 233, 223, 0.5);
+  font-size: 14px;
+}
+
+.leaderboard-error {
+  margin-top: 16px;
+  color: #e08a8a;
+  font-size: 12px;
+}
+
+.leaderboard-hint {
+  margin-top: 24px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(197, 166, 107, 0.08);
+  border: 1px solid rgba(197, 166, 107, 0.25);
+  color: rgba(240, 233, 223, 0.6);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+@media (max-width: 720px) {
+  .leaderboard-row {
+    grid-template-columns: 36px 1fr 80px 70px;
+  }
+  .leaderboard-row span:nth-child(3),
+  .leaderboard-row span:nth-child(6) {
+    display: none;
+  }
+  .leaderboard-row--head span:nth-child(3),
+  .leaderboard-row--head span:nth-child(6) {
+    display: none;
+  }
+}
