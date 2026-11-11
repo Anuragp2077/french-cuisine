@@ -1089,3 +1089,174 @@
     animation: none;
   }
 }
+
+/* =========================================================
+   RING CONTROLS (phone)
+========================================================= */
+
+.game-start-card__hint em {
+  display: block;
+  margin-top: 7px;
+  font-style: normal;
+  letter-spacing: 0.06em;
+  color: rgba(217, 164, 65, 0.72);
+}
+
+.game-fight {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.game-fight__moves {
+  position: absolute;
+  left: clamp(14px, 3vw, 30px);
+  bottom: clamp(16px, 3.5vw, 34px);
+  display: flex;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.game-fight__move {
+  width: clamp(58px, 9vw, 68px);
+  height: clamp(58px, 9vw, 68px);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(240, 233, 223, 0.32);
+  border-radius: 14px;
+  background: rgba(18, 12, 9, 0.62);
+  color: #f6eddc;
+  font-family: var(--game-sans);
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.32);
+  transition:
+    transform 0.1s ease,
+    background 0.15s ease;
+}
+
+.game-fight__move:active {
+  transform: scale(0.94);
+  background: rgba(217, 164, 65, 0.26);
+}
+
+.game-fight__punch {
+  position: absolute;
+  right: clamp(104px, 17vw, 146px);
+  bottom: clamp(24px, 5vw, 46px);
+  width: clamp(62px, 10vw, 76px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(216, 137, 150, 0.75);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(168, 52, 71, 0.55), rgba(26, 10, 13, 0.86));
+  color: #f6eddc;
+  font-family: var(--game-sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.35),
+    inset 0 0 20px rgba(216, 137, 150, 0.16);
+  transition: transform 0.1s ease;
+}
+
+.game-fight__punch:active {
+  transform: scale(0.92);
+}
+
+@media (max-width: 560px) {
+  .game-fight__move {
+    width: 62px;
+    height: 62px;
+  }
+
+  .game-fight__punch {
+    right: 104px;
+    bottom: 22px;
+    width: 66px;
+  }
+}
+
+/* =========================================================
+   SLIDE CONTROL + CHARGED PUNCH
+========================================================= */
+
+.game-slide {
+  position: absolute;
+  z-index: 5;
+  right: clamp(104px, 14vw, 128px);
+  bottom: clamp(16px, 3.5vw, 34px);
+  width: clamp(64px, 10.5vw, 80px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(240, 233, 223, 0.42);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(240, 233, 223, 0.16), rgba(18, 12, 9, 0.8));
+  color: #f6eddc;
+  font-family: var(--game-sans);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 0 22px rgba(240, 233, 223, 0.08);
+  transition:
+    transform 0.12s ease,
+    background 0.2s ease;
+}
+
+.game-slide:active {
+  transform: scale(0.93);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(240, 233, 223, 0.32), rgba(24, 16, 11, 0.9));
+}
+
+.game-slide:focus-visible,
+.game-fight__punch:focus-visible {
+  outline: 2px solid rgba(217, 164, 65, 0.9);
+  outline-offset: 3px;
+}
+
+.game-fight__punch.is-charged {
+  border-color: #ffd978;
+  background:
+    radial-gradient(circle at 35% 28%, #ffe9b0, #d9a441 62%, #8a5d14);
+  color: #2a1a0c;
+  box-shadow:
+    0 0 0 2px rgba(217, 164, 65, 0.4),
+    0 10px 32px rgba(217, 164, 65, 0.5),
+    inset 0 0 20px rgba(255, 244, 214, 0.6);
+}
+
+@media (max-width: 560px) {
+  .game-slide {
+    right: 104px;
+    bottom: 14px;
+    width: 68px;
+  }
+}
