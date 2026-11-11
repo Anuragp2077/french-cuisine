@@ -1,7 +1,7 @@
 const POLL_MS = 5000;
 const LEADR_API_BASE = "https://api.leadrcloud.com/v1/client";
-const LEADR_BOARD_ID = "brd_23d3513d-066a-4bd4-9211-95393b130756";
-const LEADR_GAME_ID = "gam_29f0a126-9f19-4a61-9916-6794b4b490a9";
+const LEADR_BOARD_ID = "brd_eb487f50-3ea0-4b4f-9c9f-b4cec920488a";
+const LEADR_GAME_ID = "gam_3ba60faa-5634-4a28-af80-fcf3a1efa126";
 const DEVICE_ID_KEY = "french-cuisine-leadr-device-id";
 
 let leadrSession = null;
